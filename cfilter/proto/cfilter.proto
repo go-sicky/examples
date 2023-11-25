@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package cfilter.examples.sicky.dev;
+option go_package="./proto;proto";
+
+service CFilter {
+    rpc Filter(FilterRequest) returns (FilterResponse) {}
+}
+
+message FilterRequest {
+    string input = 1;
+}
+
+message FilterResponse {
+    string output = 1;
+}
