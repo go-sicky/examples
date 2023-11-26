@@ -30,21 +30,57 @@
 
 package handler
 
-import "github.com/gofiber/fiber/v2"
+import (
+	pb "github.com/go-sicky/examples/cfilter/proto"
+	"github.com/go-sicky/sicky"
+	"github.com/gofiber/fiber/v2"
+)
+
+const (
+	CFilterName = "cfilter.examples.sicky"
+)
 
 type CFilter struct {
+	name          string
+	clientCFilter pb.CFilterClient
 }
 
-func NewCFilter() *CFilter {
-	return new(CFilter)
+func NewCFilter(name string) *CFilter {
+	h := &CFilter{
+		name: name,
+	}
+
+	return h
 }
 
 func (h *CFilter) Register(app *fiber.App) {
+	h.clientCFilter = pb.NewCFilterClient(
+		sicky.DefaultService.Client(CFilterName),
+	)
+
 	app.Post("/filter", h.filter).Name("POST.filter")
 }
 
+func (h *CFilter) Name() string {
+	return h.name
+}
+
+func (h *CFilter) Type() string {
+	return "http"
+}
+
 func (h *CFilter) filter(ctx *fiber.Ctx) error {
-	return ctx.JSON(nil)
+	resp, err := h.clientCFilter.Filter(
+		ctx.Context(),
+		&pb.FilterRequest{
+			Input: "Miao",
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(resp.Output)
 }
 
 /*

@@ -36,27 +36,43 @@ import (
 
 	"github.com/go-sicky/examples/bff/handler"
 	"github.com/go-sicky/sicky"
+	"github.com/go-sicky/sicky/client"
+	cgrpc "github.com/go-sicky/sicky/client/grpc"
 	"github.com/go-sicky/sicky/server"
 	shttp "github.com/go-sicky/sicky/server/http"
 )
 
 const (
-	AppName = "bff.examples.sicky"
-	Version = "v0.0.1"
+	AppName     = "bff.examples.sicky"
+	CFilterName = "cfilter.examples.sicky"
+	Version     = "v0.0.1"
 )
 
 func main() {
 	cfg := sicky.DefaultConfig(AppName, Version)
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	// Server
 	httpSrv := shttp.NewServer(
 		shttp.DefaultConfig(AppName),
 		server.Logger(logger),
 	)
-	httpSrv.RegisterHandler(handler.NewCFilter())
+	httpSrv.Handle(
+		server.NewHandler(
+			handler.NewCFilter("bff"),
+		),
+	)
+
+	// Client
+	grpcClt := cgrpc.NewClient(
+		cgrpc.DefaultConfig(CFilterName),
+		client.Logger(logger),
+	)
+
 	svc := sicky.NewService(
 		&cfg.Sicky.Service,
 		sicky.Logger(logger),
 		sicky.Server(httpSrv),
+		sicky.Client(grpcClt),
 	)
 
 	err := svc.Run()

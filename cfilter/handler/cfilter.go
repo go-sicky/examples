@@ -34,14 +34,32 @@ import (
 	"context"
 
 	pb "github.com/go-sicky/examples/cfilter/proto"
+	"google.golang.org/grpc"
 )
 
 type CFilter struct {
+	name string
+	desc *grpc.ServiceDesc
 	pb.UnimplementedCFilterServer
 }
 
-func NewCFilter() *CFilter {
-	return new(CFilter)
+func NewCFilter(name string) *CFilter {
+	return &CFilter{
+		name: name,
+		desc: &pb.CFilter_ServiceDesc,
+	}
+}
+
+func (h *CFilter) Register(app *grpc.Server) {
+	app.RegisterService(h.desc, h)
+}
+
+func (h *CFilter) Name() string {
+	return h.name
+}
+
+func (h *CFilter) Type() string {
+	return "grpc"
 }
 
 func (h *CFilter) Filter(ctx context.Context, req *pb.FilterRequest) (*pb.FilterResponse, error) {

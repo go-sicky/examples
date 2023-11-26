@@ -35,7 +35,6 @@ import (
 	"os"
 
 	"github.com/go-sicky/examples/cfilter/handler"
-	pb "github.com/go-sicky/examples/cfilter/proto"
 	"github.com/go-sicky/sicky"
 	"github.com/go-sicky/sicky/server"
 	sgrpc "github.com/go-sicky/sicky/server/grpc"
@@ -53,7 +52,12 @@ func main() {
 		sgrpc.DefaultConfig(AppName),
 		server.Logger(logger),
 	)
-	pb.RegisterCFilterServer(grpcSrv, handler.NewCFilter())
+	grpcSrv.Handle(
+		server.NewHandler(
+			handler.NewCFilter("cfilter"),
+		),
+	)
+
 	svc := sicky.NewService(
 		&cfg.Sicky.Service,
 		sicky.Logger(logger),
