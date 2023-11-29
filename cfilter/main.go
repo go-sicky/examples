@@ -31,11 +31,9 @@
 package main
 
 import (
-	"log/slog"
-	"os"
-
 	"github.com/go-sicky/examples/cfilter/handler"
 	"github.com/go-sicky/sicky"
+	"github.com/go-sicky/sicky/logger"
 	"github.com/go-sicky/sicky/server"
 	sgrpc "github.com/go-sicky/sicky/server/grpc"
 )
@@ -46,11 +44,19 @@ const (
 )
 
 func main() {
-	cfg := sicky.DefaultConfig(AppName, Version)
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	cfg, err := sicky.LoadConfig(AppName)
+	if err != nil {
+		logger.Logger.Errorf("Load config failed : %s", err)
+	}
+
+	if cfg == nil {
+		cfg = sicky.DefaultConfig(AppName, Version)
+	}
+
+	logger.Logger.Level(logger.LogLevel(cfg.Sicky.LogLevel))
+
 	grpcSrv := sgrpc.NewServer(
-		sgrpc.DefaultConfig(AppName),
-		server.Logger(logger),
+		cfg.GRPCServer(AppName),
 	)
 	grpcSrv.Handle(
 		server.NewHandler(
@@ -59,14 +65,13 @@ func main() {
 	)
 
 	svc := sicky.NewService(
-		&cfg.Sicky.Service,
-		sicky.Logger(logger),
+		cfg,
 		sicky.Server(grpcSrv),
 	)
 
-	err := svc.Run()
+	err = svc.Run()
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Logger.Error(err.Error())
 	}
 }
 

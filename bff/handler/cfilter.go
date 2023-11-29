@@ -71,7 +71,7 @@ func (h *CFilter) Type() string {
 
 func (h *CFilter) filter(ctx *fiber.Ctx) error {
 	resp, err := h.clientCFilter.Filter(
-		ctx.Context(),
+		ctx.UserContext(),
 		&pb.FilterRequest{
 			Input: "Miao",
 		},

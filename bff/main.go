@@ -31,13 +31,10 @@
 package main
 
 import (
-	"log/slog"
-	"os"
-
 	"github.com/go-sicky/examples/bff/handler"
 	"github.com/go-sicky/sicky"
-	"github.com/go-sicky/sicky/client"
 	cgrpc "github.com/go-sicky/sicky/client/grpc"
+	"github.com/go-sicky/sicky/logger"
 	"github.com/go-sicky/sicky/server"
 	shttp "github.com/go-sicky/sicky/server/http"
 )
@@ -49,12 +46,20 @@ const (
 )
 
 func main() {
-	cfg := sicky.DefaultConfig(AppName, Version)
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	cfg, err := sicky.LoadConfig(AppName)
+	if err != nil {
+		logger.Logger.Errorf("Load config failed : %s", err)
+	}
+
+	if cfg == nil {
+		cfg = sicky.DefaultConfig(AppName, Version)
+	}
+
+	logger.Logger.Level(logger.LogLevel(cfg.Sicky.LogLevel))
+
 	// Server
 	httpSrv := shttp.NewServer(
-		shttp.DefaultConfig(AppName),
-		server.Logger(logger),
+		cfg.HTTPServer(AppName),
 	)
 	httpSrv.Handle(
 		server.NewHandler(
@@ -64,20 +69,18 @@ func main() {
 
 	// Client
 	grpcClt := cgrpc.NewClient(
-		cgrpc.DefaultConfig(CFilterName),
-		client.Logger(logger),
+		cfg.GRPCClient(CFilterName),
 	)
 
 	svc := sicky.NewService(
-		&cfg.Sicky.Service,
-		sicky.Logger(logger),
+		cfg,
 		sicky.Server(httpSrv),
 		sicky.Client(grpcClt),
 	)
 
-	err := svc.Run()
+	err = svc.Run()
 	if err != nil {
-		logger.Error(err.Error())
+		logger.Logger.Error(err.Error())
 	}
 }
 
