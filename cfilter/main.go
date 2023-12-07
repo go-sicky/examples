@@ -44,23 +44,19 @@ const (
 )
 
 func main() {
-	cfg, err := sicky.LoadConfig(AppName)
+	cfg, err := sicky.LoadConfig(AppName, Version)
 	if err != nil {
 		logger.Logger.Errorf("Load config failed : %s", err)
-	}
-
-	if cfg == nil {
-		cfg = sicky.DefaultConfig(AppName, Version)
 	}
 
 	logger.Logger.Level(logger.LogLevel(cfg.Sicky.LogLevel))
 
 	grpcSrv := sgrpc.NewServer(
 		cfg.GRPCServer(AppName),
-	)
-	grpcSrv.Handle(
-		server.NewHandler(
-			handler.NewCFilter("cfilter"),
+		server.Handle(
+			server.NewHandler(
+				handler.NewCFilter("cfilter"),
+			),
 		),
 	)
 
