@@ -56,11 +56,7 @@ func main() {
 	// Server
 	httpSrv := shttp.NewServer(
 		cfg.HTTPServer(AppName),
-		server.Handle(
-			server.NewHandler(
-				handler.NewCFilter("bff"),
-			),
-		),
+		server.Handle(handler.NewCFilter("bff")),
 	)
 
 	// Client

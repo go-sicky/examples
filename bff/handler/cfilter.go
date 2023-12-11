@@ -32,7 +32,8 @@ package handler
 
 import (
 	pb "github.com/go-sicky/examples/cfilter/proto"
-	"github.com/go-sicky/sicky"
+	"github.com/go-sicky/sicky/client/grpc"
+	"github.com/go-sicky/sicky/server/http"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -53,12 +54,15 @@ func NewCFilter(name string) *CFilter {
 	return h
 }
 
-func (h *CFilter) Register(app *fiber.App) {
+func (h *CFilter) Register(name string) {
 	h.clientCFilter = pb.NewCFilterClient(
-		sicky.DefaultService.Client(CFilterName),
+		grpc.Instance(CFilterName),
 	)
 
-	app.Post("/filter", h.filter).Name("POST.filter")
+	srv := http.Instance(name)
+	if srv != nil {
+		srv.App().Post("/filter", h.filter).Name("POST.filter")
+	}
 }
 
 func (h *CFilter) Name() string {

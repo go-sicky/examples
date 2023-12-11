@@ -53,11 +53,7 @@ func main() {
 
 	grpcSrv := sgrpc.NewServer(
 		cfg.GRPCServer(AppName),
-		server.Handle(
-			server.NewHandler(
-				handler.NewCFilter("cfilter"),
-			),
-		),
+		server.Handle(handler.NewCFilter("cfilter")),
 	)
 
 	svc := sicky.NewService(

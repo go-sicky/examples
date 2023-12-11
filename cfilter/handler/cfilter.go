@@ -34,6 +34,7 @@ import (
 	"context"
 
 	pb "github.com/go-sicky/examples/cfilter/proto"
+	sgrpc "github.com/go-sicky/sicky/server/grpc"
 	"google.golang.org/grpc"
 )
 
@@ -50,8 +51,11 @@ func NewCFilter(name string) *CFilter {
 	}
 }
 
-func (h *CFilter) Register(app *grpc.Server) {
-	app.RegisterService(h.desc, h)
+func (h *CFilter) Register(name string) {
+	srv := sgrpc.Instance(name)
+	if srv != nil {
+		srv.App().RegisterService(h.desc, h)
+	}
 }
 
 func (h *CFilter) Name() string {
