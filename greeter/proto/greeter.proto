@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package greeter.examples.sicky.dev;
+option go_package="./proto;proto";
+import "google/protobuf/empty.proto";
+
+service Greeter {
+    rpc Hello(HelloRequest) returns (HelloResponse) {}
+    rpc Timestamp(google.protobuf.Empty) returns (TimestampResponse) {}  
+};
+
+message HelloRequest {
+    string name = 1;
+};
+message HelloResponse {
+    string hello = 1;
+};
+
+message TimestampResponse {
+    string timestamp = 1;
+};
+        

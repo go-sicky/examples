@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+package web.examples.sicky.dev;
+option go_package="./proto;proto";
+
+service Web {};

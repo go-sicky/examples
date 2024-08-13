@@ -22,50 +22,13 @@
  */
 
 /**
- * @file main.go
- * @package main
+ * @file web_http.go
+ * @package handler
  * @author Dr.NP <np@herewe.tech>
- * @since 11/23/2023
+ * @since 08/10/2024
  */
 
-package main
-
-import (
-	"github.com/go-sicky/examples/cfilter/handler"
-	"github.com/go-sicky/sicky"
-	"github.com/go-sicky/sicky/logger"
-	"github.com/go-sicky/sicky/server"
-	sgrpc "github.com/go-sicky/sicky/server/grpc"
-)
-
-const (
-	AppName = "cfilter.examples.sicky"
-	Version = "v0.0.1"
-)
-
-func main() {
-	cfg, err := sicky.LoadConfig(AppName, Version)
-	if err != nil {
-		logger.Logger.Errorf("Load config failed : %s", err)
-	}
-
-	logger.Logger.Level(logger.LogLevel(cfg.Sicky.LogLevel))
-
-	grpcSrv := sgrpc.NewServer(
-		cfg.GRPCServer(AppName),
-		server.Handle(handler.NewCFilter("cfilter")),
-	)
-
-	svc := sicky.NewService(
-		cfg,
-		sicky.Server(grpcSrv),
-	)
-
-	err = svc.Run()
-	if err != nil {
-		logger.Logger.Error(err.Error())
-	}
-}
+package handler
 
 /*
  * Local variables:

@@ -22,55 +22,61 @@
  */
 
 /**
- * @file cfilter.go
- * @package handler
+ * @file main.go
+ * @package main
  * @author Dr.NP <np@herewe.tech>
- * @since 11/24/2023
+ * @since 08/10/2024
  */
 
-package handler
+package main
 
 import (
-	"context"
-
-	pb "github.com/go-sicky/examples/cfilter/proto"
-	sgrpc "github.com/go-sicky/sicky/server/grpc"
-	"google.golang.org/grpc"
+	srvGRPC "github.com/go-sicky/sicky/server/grpc"
+	srvHTTP "github.com/go-sicky/sicky/server/http"
+	"github.com/go-sicky/sicky/service"
+	"github.com/go-sicky/sicky/service/sicky"
 )
 
-type CFilter struct {
-	name string
-	desc *grpc.ServiceDesc
-	pb.UnimplementedCFilterServer
-}
+const (
+	AppName = "web.examples.sicky"
+	Version = "latest"
+)
 
-func NewCFilter(name string) *CFilter {
-	return &CFilter{
-		name: name,
-		desc: &pb.CFilter_ServiceDesc,
-	}
-}
+func main() {
+	svc := sicky.New(nil, nil)
+	svc.Servers(
+		srvHTTP.New(nil, nil),
+		srvGRPC.New(nil, nil),
+	)
+	service.Run()
+	// cfg, err := sicky.LoadConfig(AppName, Version)
+	// if err != nil {
+	// 	logger.Logger.Errorf("Load config failed : %s", err)
+	// }
 
-func (h *CFilter) Register(name string) {
-	srv := sgrpc.Instance(name)
-	if srv != nil {
-		srv.App().RegisterService(h.desc, h)
-	}
-}
+	// logger.Logger.Level(logger.LogLevel(cfg.Sicky.LogLevel))
 
-func (h *CFilter) Name() string {
-	return h.name
-}
+	// // Server
+	// httpSrv := shttp.NewServer(
+	// 	cfg.HTTPServer(AppName),
+	// 	server.Handle(handler.NewCFilter("bff")),
+	// )
 
-func (h *CFilter) Type() string {
-	return "grpc"
-}
+	// // Client
+	// grpcClt := cgrpc.NewClient(
+	// 	cfg.GRPCClient(CFilterName),
+	// )
 
-func (h *CFilter) Filter(ctx context.Context, req *pb.FilterRequest) (*pb.FilterResponse, error) {
-	resp := new(pb.FilterResponse)
-	resp.Output = "Hello " + req.Input
+	// svc := sicky.NewService(
+	// 	cfg,
+	// 	sicky.Server(httpSrv),
+	// 	sicky.Client(grpcClt),
+	// )
 
-	return resp, nil
+	// err = svc.Run()
+	// if err != nil {
+	// 	logger.Logger.Error(err.Error())
+	// }
 }
 
 /*

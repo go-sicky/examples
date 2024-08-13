@@ -22,69 +22,41 @@
  */
 
 /**
- * @file cfilter.go
- * @package handler
+ * @file main.go
+ * @package main
  * @author Dr.NP <np@herewe.tech>
- * @since 11/25/2023
+ * @since 08/10/2024
  */
 
-package handler
-
-import (
-	pb "github.com/go-sicky/examples/cfilter/proto"
-	"github.com/go-sicky/sicky/client/grpc"
-	"github.com/go-sicky/sicky/server/http"
-	"github.com/gofiber/fiber/v2"
-)
+package main
 
 const (
-	CFilterName = "cfilter.examples.sicky"
+	AppName = "greeter.examples.sicky"
+	Version = "latest"
 )
 
-type CFilter struct {
-	name          string
-	clientCFilter pb.CFilterClient
-}
+func main() {
+	// cfg, err := sicky.LoadConfig(AppName, Version)
+	// if err != nil {
+	// 	logger.Logger.Errorf("Load config failed : %s", err)
+	// }
 
-func NewCFilter(name string) *CFilter {
-	h := &CFilter{
-		name: name,
-	}
+	// logger.Logger.Level(logger.LogLevel(cfg.Sicky.LogLevel))
 
-	return h
-}
+	// grpcSrv := sgrpc.NewServer(
+	// 	cfg.GRPCServer(AppName),
+	// 	server.Handle(handler.NewCFilter("cfilter")),
+	// )
 
-func (h *CFilter) Register(name string) {
-	h.clientCFilter = pb.NewCFilterClient(
-		grpc.Instance(CFilterName),
-	)
+	// svc := sicky.NewService(
+	// 	cfg,
+	// 	sicky.Server(grpcSrv),
+	// )
 
-	srv := http.Instance(name)
-	if srv != nil {
-		srv.App().Post("/filter", h.filter).Name("POST.filter")
-	}
-}
-
-func (h *CFilter) Name() string {
-	return h.name
-}
-
-func (h *CFilter) Type() string {
-	return "http"
-}
-
-func (h *CFilter) filter(ctx *fiber.Ctx) error {
-	resp, err := h.clientCFilter.Filter(
-		ctx.UserContext(),
-		&pb.FilterRequest{
-			Input: "Miao",
-		},
-	)
-	if err != nil {
-		return err
-	}
-
-	return ctx.JSON(resp.Output)
+	// err = svc.Run()
+	// if err != nil {
+	// 	logger.Logger.Error(err.Error())
+	// }
 }
 
 /*
