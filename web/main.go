@@ -31,6 +31,9 @@
 package main
 
 import (
+	"github.com/go-sicky/examples/web/handler"
+	brkNats "github.com/go-sicky/sicky/broker/nats"
+	rgMDNS "github.com/go-sicky/sicky/registry/mdns"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	srvHTTP "github.com/go-sicky/sicky/server/http"
 	"github.com/go-sicky/sicky/service"
@@ -43,11 +46,27 @@ const (
 )
 
 func main() {
+	// HTTP server
+	httpSrv := srvHTTP.New(nil, nil)
+	httpSrv.Handle(handler.NewCallHTTP())
+	httpSrv.Handle(handler.NewBrokerHTTP())
+
+	// GRPC server
+	grpcSrv := srvGRPC.New(nil, nil)
+	grpcSrv.Handle(handler.NewWebGRPC())
+
+	// Broker
+	brk := brkNats.New(nil, nil)
+
+	// Registry
+	rg := rgMDNS.New(nil, nil)
+
+	// Service
 	svc := sicky.New(nil, nil)
-	svc.Servers(
-		srvHTTP.New(nil, nil),
-		srvGRPC.New(nil, nil),
-	)
+	svc.Servers(httpSrv, grpcSrv)
+	svc.Brokers(brk)
+	svc.Registries(rg)
+
 	service.Run()
 	// cfg, err := sicky.LoadConfig(AppName, Version)
 	// if err != nil {

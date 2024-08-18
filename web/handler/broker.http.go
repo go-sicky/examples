@@ -22,67 +22,35 @@
  */
 
 /**
- * @file main.go
- * @package main
+ * @file broker.http.go
+ * @package handler
  * @author Dr.NP <np@herewe.tech>
  * @since 08/10/2024
  */
 
-package main
+package handler
 
-import (
-	"github.com/go-sicky/examples/greeter/handler"
-	brkNats "github.com/go-sicky/sicky/broker/nats"
-	rgMDNS "github.com/go-sicky/sicky/registry/mdns"
-	srvGRPC "github.com/go-sicky/sicky/server/grpc"
-	"github.com/go-sicky/sicky/service"
-	"github.com/go-sicky/sicky/service/sicky"
-)
+import "github.com/gofiber/fiber/v2"
 
-const (
-	AppName = "greeter.examples.sicky"
-	Version = "latest"
-)
+type BrokerHTTP struct {
+}
 
-func main() {
-	// GRPC server
-	grpcSrv := srvGRPC.New(nil, nil)
-	grpcSrv.Handle(handler.NewGreeterGRPC())
+func NewBrokerHTTP() *BrokerHTTP {
+	h := &BrokerHTTP{}
 
-	// Broker
-	brk := brkNats.New(nil, nil)
+	return h
+}
 
-	// Registry
-	rg := rgMDNS.New(nil, nil)
+func (h *BrokerHTTP) Register(app *fiber.App) {
 
-	// Service
-	svc := sicky.New(nil, nil)
-	svc.Servers(grpcSrv)
-	svc.Brokers(brk)
-	svc.Registries(rg)
+}
 
-	service.Run()
-	// cfg, err := sicky.LoadConfig(AppName, Version)
-	// if err != nil {
-	// 	logger.Logger.Errorf("Load config failed : %s", err)
-	// }
+func (h *BrokerHTTP) Name() string {
+	return "broker.http"
+}
 
-	// logger.Logger.Level(logger.LogLevel(cfg.Sicky.LogLevel))
-
-	// grpcSrv := sgrpc.NewServer(
-	// 	cfg.GRPCServer(AppName),
-	// 	server.Handle(handler.NewCFilter("cfilter")),
-	// )
-
-	// svc := sicky.NewService(
-	// 	cfg,
-	// 	sicky.Server(grpcSrv),
-	// )
-
-	// err = svc.Run()
-	// if err != nil {
-	// 	logger.Logger.Error(err.Error())
-	// }
+func (h *BrokerHTTP) Type() string {
+	return "http"
 }
 
 /*

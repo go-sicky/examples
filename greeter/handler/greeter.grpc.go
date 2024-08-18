@@ -22,13 +22,35 @@
  */
 
 /**
- * @file greeter_grpc.go
+ * @file greeter.grpc.go
  * @package handler
  * @author Dr.NP <np@herewe.tech>
  * @since 08/10/2024
  */
 
 package handler
+
+import "google.golang.org/grpc"
+
+type GreeterGRPC struct{}
+
+func NewGreeterGRPC() *GreeterGRPC {
+	h := &GreeterGRPC{}
+
+	return h
+}
+
+func (h *GreeterGRPC) Register(app *grpc.Server) {
+
+}
+
+func (h *GreeterGRPC) Name() string {
+	return "greeter.grpc"
+}
+
+func (h *GreeterGRPC) Type() string {
+	return "grpc"
+}
 
 /*
  * Local variables:
