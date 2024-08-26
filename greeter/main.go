@@ -33,7 +33,9 @@ package main
 import (
 	"github.com/go-sicky/examples/greeter/handler"
 	brkNats "github.com/go-sicky/sicky/broker/nats"
-	rgConsul "github.com/go-sicky/sicky/registry/consul"
+
+	//rgConsul "github.com/go-sicky/sicky/registry/consul"
+	rgMdns "github.com/go-sicky/sicky/registry/mdns"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	"github.com/go-sicky/sicky/service"
 	"github.com/go-sicky/sicky/service/sicky"
@@ -46,14 +48,15 @@ const (
 
 func main() {
 	// GRPC server
-	grpcSrv := srvGRPC.New(nil, nil)
+	grpcSrv := srvGRPC.New(AppName+"@grpc", nil, nil)
 	grpcSrv.Handle(handler.NewGreeterGRPC())
 
 	// Broker
 	brk := brkNats.New(nil, nil)
 
 	// Registry
-	rg := rgConsul.New(nil, nil)
+	//rg := rgConsul.New(nil, nil)
+	rg := rgMdns.New(nil, nil)
 
 	// Service
 	svc := sicky.New(nil, nil)
