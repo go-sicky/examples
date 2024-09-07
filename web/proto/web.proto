@@ -3,4 +3,13 @@ syntax = "proto3";
 package web.examples.sicky.dev;
 option go_package="./proto;proto";
 
-service Web {};
+service Web {
+    rpc Call(WebCallReq) returns (WebCallResp);
+};
+
+message WebCallReq {
+    string name = 1;
+};
+message WebCallResp {
+    string hello = 1;
+};

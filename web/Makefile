@@ -68,11 +68,11 @@ BINARY_DIR=$(PREFIX)/bin
 BINARY_NAME=svc
 DOCKER_TAG=hkccr.ccs.tencentyun.com/sicky/web.examples.sicky:latest
 
-.PHONY: all summary build test upgrade doc docker push
+.PHONY: all summary fmt proto build test upgrade grpc docker push
 .DEFAULT: all
 
 # Targets
-all: summary fmt build
+all: summary proto fmt build
 
 summary:
 	@printf "\033[1;37m  == \033[1;32m$(PROJECT) \033[1;33m$(VERSION) \033[1;37m==\033[0m\n"
@@ -91,6 +91,14 @@ fmt:
 	@printf "\033[1;32m    ... Passed\033[0m\n"
 	@echo
 
+proto:
+	@printf "\033[1;36m  Compiling protos ...\033[0m\n"
+	@for f in $(shell find ./proto -name '*.proto') ; do \
+		printf "    \033[1;34mCompiling : \033[1;35m<$${f}>\033[0m\n" && \
+		$(PROTOC) --go_out=. --go-grpc_out=. $${f} ; \
+	done
+	@echo
+
 build:
 	@printf "\033[1;36m  Compiling $(BINARY_NAME) ...\033[0m\n"
 	@mkdir -p $(BINARY_DIR)
@@ -107,6 +115,12 @@ upgrade:
 	@printf "\033[1;36m  Upgrading dependences ...\033[0m\n"
 	@GOOS=$(OS) GOARCH=$(ARCH) $(GO) get -u ./...
 	@GOOS=$(OS) GOARCH=$(ARCH) $(GO) mod tidy
+	@echo
+
+grpc:
+	@printf "\033[1;36m  Upgrading gRPC compiler toolchains ...\033[0m\n"
+	@GOOS=$(OS) GOARCH=$(ARCH) $(GO) install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	@GOOS=$(OS) GOARCH=$(ARCH) $(GO) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 	@echo
 
 docker:

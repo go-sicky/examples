@@ -30,7 +30,10 @@
 
 package handler
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/go-sicky/sicky/utils"
+	"github.com/gofiber/fiber/v2"
+)
 
 type CallHTTP struct {
 }
@@ -54,8 +57,8 @@ func (h *CallHTTP) Type() string {
 }
 
 /* {{{ [HTTP handlers] */
-func (h *CallHTTP) greeter(ctx *fiber.Ctx) error {
-	return nil
+func (h *CallHTTP) greeter(c *fiber.Ctx) error {
+	return c.JSON(utils.WrapHTTPResponse("hello"))
 }
 
 /* }}} */

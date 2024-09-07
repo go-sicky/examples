@@ -33,6 +33,7 @@ package main
 import (
 	"github.com/go-sicky/examples/web/handler"
 	brkNats "github.com/go-sicky/sicky/broker/nats"
+	"github.com/go-sicky/sicky/logger"
 
 	//rgConsul "github.com/go-sicky/sicky/registry/consul"
 	rgMdns "github.com/go-sicky/sicky/registry/mdns"
@@ -48,6 +49,9 @@ const (
 )
 
 func main() {
+	// Logger
+	logger.Logger.Level(logger.DebugLevel)
+
 	// HTTP server
 	httpSrv := srvHTTP.New(AppName+"@http", nil, nil)
 	httpSrv.Handle(handler.NewCallHTTP())
