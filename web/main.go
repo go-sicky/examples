@@ -34,6 +34,8 @@ import (
 	"github.com/go-sicky/examples/web/handler"
 	brkNats "github.com/go-sicky/sicky/broker/nats"
 	"github.com/go-sicky/sicky/logger"
+	"github.com/go-sicky/sicky/runtime"
+	"github.com/go-sicky/sicky/server"
 
 	//rgConsul "github.com/go-sicky/sicky/registry/consul"
 	rgMdns "github.com/go-sicky/sicky/registry/mdns"
@@ -49,16 +51,19 @@ const (
 )
 
 func main() {
+	// Runtime
+	runtime.Init(AppName)
+
 	// Logger
 	logger.Logger.Level(logger.DebugLevel)
 
 	// HTTP server
-	httpSrv := srvHTTP.New(AppName+"@http", nil, nil)
+	httpSrv := srvHTTP.New(&server.Options{Name: AppName + "@http"}, nil)
 	httpSrv.Handle(handler.NewCallHTTP())
 	httpSrv.Handle(handler.NewBrokerHTTP())
 
 	// GRPC server
-	grpcSrv := srvGRPC.New(AppName+"@grpc", nil, nil)
+	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, nil)
 	grpcSrv.Handle(handler.NewWebGRPC())
 
 	// Broker

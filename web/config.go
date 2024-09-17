@@ -22,72 +22,15 @@
  */
 
 /**
- * @file main.go
+ * @file config.go
  * @package main
  * @author Dr.NP <np@herewe.tech>
- * @since 08/10/2024
+ * @since 09/18/2024
  */
 
 package main
 
-import (
-	"github.com/go-sicky/examples/greeter/handler"
-	brkNats "github.com/go-sicky/sicky/broker/nats"
-	"github.com/go-sicky/sicky/server"
-
-	//rgConsul "github.com/go-sicky/sicky/registry/consul"
-	rgMdns "github.com/go-sicky/sicky/registry/mdns"
-	srvGRPC "github.com/go-sicky/sicky/server/grpc"
-	"github.com/go-sicky/sicky/service"
-	"github.com/go-sicky/sicky/service/sicky"
-)
-
-const (
-	AppName = "greeter.examples.sicky"
-	Version = "latest"
-)
-
-func main() {
-	// GRPC server
-	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, nil)
-	grpcSrv.Handle(handler.NewGreeterGRPC())
-
-	// Broker
-	brk := brkNats.New(nil, nil)
-
-	// Registry
-	//rg := rgConsul.New(nil, nil)
-	rg := rgMdns.New(nil, nil)
-
-	// Service
-	svc := sicky.New(nil, nil)
-	svc.Servers(grpcSrv)
-	svc.Brokers(brk)
-	svc.Registries(rg)
-
-	service.Run()
-	// cfg, err := sicky.LoadConfig(AppName, Version)
-	// if err != nil {
-	// 	logger.Logger.Errorf("Load config failed : %s", err)
-	// }
-
-	// logger.Logger.Level(logger.LogLevel(cfg.Sicky.LogLevel))
-
-	// grpcSrv := sgrpc.NewServer(
-	// 	cfg.GRPCServer(AppName),
-	// 	server.Handle(handler.NewCFilter("cfilter")),
-	// )
-
-	// svc := sicky.NewService(
-	// 	cfg,
-	// 	sicky.Server(grpcSrv),
-	// )
-
-	// err = svc.Run()
-	// if err != nil {
-	// 	logger.Logger.Error(err.Error())
-	// }
-}
+type Config struct{}
 
 /*
  * Local variables:
