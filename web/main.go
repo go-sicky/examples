@@ -33,14 +33,15 @@ package main
 import (
 	"github.com/go-sicky/examples/web/handler"
 	brkNats "github.com/go-sicky/sicky/broker/nats"
+	brkNsq "github.com/go-sicky/sicky/broker/nsq"
 	"github.com/go-sicky/sicky/logger"
+	rgConsul "github.com/go-sicky/sicky/registry/consul"
+	rgMdns "github.com/go-sicky/sicky/registry/mdns"
 	"github.com/go-sicky/sicky/runtime"
 	"github.com/go-sicky/sicky/server"
-
-	//rgConsul "github.com/go-sicky/sicky/registry/consul"
-	rgMdns "github.com/go-sicky/sicky/registry/mdns"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	srvHTTP "github.com/go-sicky/sicky/server/http"
+	srvWebsocket "github.com/go-sicky/sicky/server/websocket"
 	"github.com/go-sicky/sicky/service"
 	"github.com/go-sicky/sicky/service/sicky"
 )
@@ -66,18 +67,22 @@ func main() {
 	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, nil)
 	grpcSrv.Handle(handler.NewWebGRPC())
 
+	// Websocket server
+	wsSrv := srvWebsocket.New(&server.Options{Name: AppName + "@websocket"}, nil)
+
 	// Broker
-	brk := brkNats.New(nil, nil)
+	brkNats := brkNats.New(nil, nil)
+	brkNsq := brkNsq.New(nil, nil)
 
 	// Registry
-	//rg := rgConsul.New(nil, nil)
-	rg := rgMdns.New(nil, nil)
+	rgConsul := rgConsul.New(nil, nil)
+	rgMdns := rgMdns.New(nil, nil)
 
 	// Service
 	svc := sicky.New(nil, nil)
-	svc.Servers(httpSrv, grpcSrv)
-	svc.Brokers(brk)
-	svc.Registries(rg)
+	svc.Servers(httpSrv, grpcSrv, wsSrv)
+	svc.Brokers(brkNats, brkNsq)
+	svc.Registries(rgMdns, rgConsul)
 
 	service.Run()
 	// cfg, err := sicky.LoadConfig(AppName, Version)
