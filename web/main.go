@@ -54,32 +54,33 @@ const (
 func main() {
 	// Runtime
 	runtime.Init(AppName)
+	runtime.Config.Unmarshal(&config)
 
 	// Logger
 	logger.Logger.Level(logger.DebugLevel)
 
 	// HTTP server
-	httpSrv := srvHTTP.New(&server.Options{Name: AppName + "@http"}, nil)
+	httpSrv := srvHTTP.New(&server.Options{Name: AppName + "@http"}, config.Server.HTTP)
 	httpSrv.Handle(handler.NewCallHTTP())
 	httpSrv.Handle(handler.NewBrokerHTTP())
 
 	// GRPC server
-	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, nil)
+	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, config.Server.GRPC)
 	grpcSrv.Handle(handler.NewWebGRPC())
 
 	// Websocket server
-	wsSrv := srvWebsocket.New(&server.Options{Name: AppName + "@websocket"}, nil)
+	wsSrv := srvWebsocket.New(&server.Options{Name: AppName + "@websocket"}, config.Server.Websocket)
 
 	// Broker
-	brkNats := brkNats.New(nil, nil)
-	brkNsq := brkNsq.New(nil, nil)
+	brkNats := brkNats.New(nil, config.Broker.Nats)
+	brkNsq := brkNsq.New(nil, config.Broker.Nsq)
 
 	// Registry
-	rgConsul := rgConsul.New(nil, nil)
-	rgMdns := rgMdns.New(nil, nil)
+	rgConsul := rgConsul.New(nil, config.Registry.Consul)
+	rgMdns := rgMdns.New(nil, config.Registry.Mdns)
 
 	// Service
-	svc := sicky.New(nil, nil)
+	svc := sicky.New(&service.Options{Name: AppName}, config.Service)
 	svc.Servers(httpSrv, grpcSrv, wsSrv)
 	svc.Brokers(brkNats, brkNsq)
 	svc.Registries(rgMdns, rgConsul)
