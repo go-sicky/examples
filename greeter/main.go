@@ -52,24 +52,25 @@ const (
 func main() {
 	// Runtime
 	runtime.Init(AppName)
+	runtime.Config.Unmarshal(&config)
 
 	// Logger
 	logger.Logger.Level(logger.DebugLevel)
 
 	// GRPC server
-	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, nil)
+	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, config.Server.GRPC)
 	grpcSrv.Handle(handler.NewGreeterGRPC())
 
 	// Broker
-	brkNats := brkNats.New(nil, nil)
-	brkNsq := brkNsq.New(nil, nil)
+	brkNats := brkNats.New(nil, config.Broker.Nats)
+	brkNsq := brkNsq.New(nil, config.Broker.Nsq)
 
 	// Registry
-	rgConsul := rgConsul.New(nil, nil)
-	rgMdns := rgMdns.New(nil, nil)
+	rgConsul := rgConsul.New(nil, config.Registry.Consul)
+	rgMdns := rgMdns.New(nil, config.Registry.Mdns)
 
 	// Service
-	svc := sicky.New(nil, nil)
+	svc := sicky.New(nil, config.Service)
 	svc.Servers(grpcSrv)
 	svc.Brokers(brkNats, brkNsq)
 	svc.Registries(rgConsul, rgMdns)

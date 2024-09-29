@@ -31,6 +31,7 @@
 package handler
 
 import (
+	"github.com/go-sicky/sicky/registry"
 	"github.com/go-sicky/sicky/utils"
 	"github.com/gofiber/fiber/v2"
 )
@@ -46,6 +47,7 @@ func NewCallHTTP() *CallHTTP {
 
 func (h *CallHTTP) Register(app *fiber.App) {
 	app.Get("/", h.greeter).Name("CallGetGreeter")
+	app.Get("/pool", h.pool).Name("CallGetPool")
 }
 
 func (h *CallHTTP) Name() string {
@@ -59,6 +61,10 @@ func (h *CallHTTP) Type() string {
 /* {{{ [HTTP handlers] */
 func (h *CallHTTP) greeter(c *fiber.Ctx) error {
 	return c.JSON(utils.WrapHTTPResponse("hello"))
+}
+
+func (h *CallHTTP) pool(c *fiber.Ctx) error {
+	return c.JSON(utils.WrapHTTPResponse(registry.Pool))
 }
 
 /* }}} */
