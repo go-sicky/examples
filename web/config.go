@@ -35,6 +35,7 @@ import (
 	brkNsq "github.com/go-sicky/sicky/broker/nsq"
 	rgConsul "github.com/go-sicky/sicky/registry/consul"
 	rgMdns "github.com/go-sicky/sicky/registry/mdns"
+	"github.com/go-sicky/sicky/runtime"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	srvHTTP "github.com/go-sicky/sicky/server/http"
 	srvWebsocket "github.com/go-sicky/sicky/server/websocket"
@@ -55,7 +56,8 @@ type ConfigDef struct {
 		Consul *rgConsul.Config `json:"consul" yaml:"consul"`
 		Mdns   *rgMdns.Config   `json:"mdns" yaml:"mdns"`
 	} `json:"registry" yaml:"registry"`
-	Service *sicky.Config `json:"service" yaml:"service"`
+	Runtime *runtime.Config `json:"runtime" yaml:"runtime" mapstructure:"runtime"`
+	Service *sicky.Config   `json:"service" yaml:"service"`
 }
 
 var (

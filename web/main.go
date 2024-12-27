@@ -54,7 +54,8 @@ const (
 func main() {
 	// Runtime
 	runtime.Init(AppName)
-	runtime.Config.Unmarshal(&config)
+	runtime.LoadConfig(&config)
+	runtime.Start(config.Runtime)
 
 	// Logger
 	logger.Logger.Level(logger.DebugLevel)
@@ -86,34 +87,6 @@ func main() {
 	svc.Registries(rgMdns, rgConsul)
 
 	service.Run()
-	// cfg, err := sicky.LoadConfig(AppName, Version)
-	// if err != nil {
-	// 	logger.Logger.Errorf("Load config failed : %s", err)
-	// }
-
-	// logger.Logger.Level(logger.LogLevel(cfg.Sicky.LogLevel))
-
-	// // Server
-	// httpSrv := shttp.NewServer(
-	// 	cfg.HTTPServer(AppName),
-	// 	server.Handle(handler.NewCFilter("bff")),
-	// )
-
-	// // Client
-	// grpcClt := cgrpc.NewClient(
-	// 	cfg.GRPCClient(CFilterName),
-	// )
-
-	// svc := sicky.NewService(
-	// 	cfg,
-	// 	sicky.Server(httpSrv),
-	// 	sicky.Client(grpcClt),
-	// )
-
-	// err = svc.Run()
-	// if err != nil {
-	// 	logger.Logger.Error(err.Error())
-	// }
 }
 
 /*
