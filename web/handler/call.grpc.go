@@ -30,9 +30,15 @@
 
 package handler
 
-import "google.golang.org/grpc"
+import (
+	"context"
+
+	"github.com/go-sicky/examples/web/proto"
+	"google.golang.org/grpc"
+)
 
 type WebGRPC struct {
+	proto.UnimplementedWebServer
 }
 
 func NewWebGRPC() *WebGRPC {
@@ -42,7 +48,7 @@ func NewWebGRPC() *WebGRPC {
 }
 
 func (h *WebGRPC) Register(app *grpc.Server) {
-
+	proto.RegisterWebServer(app, h)
 }
 
 func (h *WebGRPC) Name() string {
@@ -52,6 +58,13 @@ func (h *WebGRPC) Name() string {
 func (h *WebGRPC) Type() string {
 	return "grpc"
 }
+
+/* {{{ [Protobuf methods] */
+func (h *WebGRPC) Call(ctx context.Context, req *proto.WebCallReq) (*proto.WebCallResp, error) {
+	return nil, nil
+}
+
+/* }}} */
 
 /*
  * Local variables:
