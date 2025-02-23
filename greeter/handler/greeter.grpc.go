@@ -30,9 +30,17 @@
 
 package handler
 
-import "google.golang.org/grpc"
+import (
+	"context"
 
-type GreeterGRPC struct{}
+	"github.com/go-sicky/examples/greeter/proto"
+	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
+)
+
+type GreeterGRPC struct {
+	proto.UnimplementedGreeterServer
+}
 
 func NewGreeterGRPC() *GreeterGRPC {
 	h := &GreeterGRPC{}
@@ -41,7 +49,7 @@ func NewGreeterGRPC() *GreeterGRPC {
 }
 
 func (h *GreeterGRPC) Register(app *grpc.Server) {
-
+	proto.RegisterGreeterServer(app, h)
 }
 
 func (h *GreeterGRPC) Name() string {
@@ -51,6 +59,17 @@ func (h *GreeterGRPC) Name() string {
 func (h *GreeterGRPC) Type() string {
 	return "grpc"
 }
+
+/* {{{ [Methods] */
+func (h *GreeterGRPC) Hello(ctx context.Context, req *proto.HelloRequest) (*proto.HelloResponse, error) {
+	return nil, nil
+}
+
+func (h *GreeterGRPC) Timestamp(ctx context.Context, req *emptypb.Empty) (*proto.TimestampResponse, error) {
+	return nil, nil
+}
+
+/* }}} */
 
 /*
  * Local variables:

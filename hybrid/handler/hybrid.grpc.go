@@ -30,9 +30,16 @@
 
 package handler
 
-import "google.golang.org/grpc"
+import (
+	"context"
 
-type GRPCHyprid struct{}
+	"github.com/go-sicky/example/hybrid/proto"
+	"google.golang.org/grpc"
+)
+
+type GRPCHyprid struct {
+	proto.UnimplementedHybridServer
+}
 
 func NewGRPCHybrid() *GRPCHyprid {
 	h := &GRPCHyprid{}
@@ -49,8 +56,15 @@ func (h *GRPCHyprid) Type() string {
 }
 
 func (h *GRPCHyprid) Register(app *grpc.Server) {
-	return
+	proto.RegisterHybridServer(app, h)
 }
+
+/* {{{ [Methods] */
+func (h *GRPCHyprid) Hybrid(ctx context.Context, req *proto.HybridRequest) (*proto.HybridResponse, error) {
+	return nil, nil
+}
+
+/* }}} */
 
 /*
  * Local variables:

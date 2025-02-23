@@ -22,53 +22,23 @@
  */
 
 /**
- * @file hybrid.http.go
- * @package handler
+ * @file hybrid.proto
  * @author Dr.NP <np@herewe.tech>
- * @since 01/20/2025
+ * @since 02/23/2025
  */
 
-package handler
+syntax = "proto3";
 
-import (
-	"github.com/go-sicky/sicky/utils"
-	"github.com/gofiber/fiber/v2"
-)
+package hybrid.examples.sicky.dev;
+option go_package="./proto;proto";
 
-type HTTPHybrid struct{}
-
-func NewHTTPHybrid() *HTTPHybrid {
-	h := &HTTPHybrid{}
-
-	return h
+service Hybrid {
+    rpc Hybrid(HybridRequest) returns (HybridResponse);
 }
 
-func (h *HTTPHybrid) Name() string {
-	return "hybrid.http"
-}
-
-func (h *HTTPHybrid) Type() string {
-	return "http"
-}
-
-func (h *HTTPHybrid) Register(app *fiber.App) {
-	app.Get("/hybrid/http", h.hybrid).Name("HybridGetHybrid")
-}
-
-/* {{{ [Methods] */
-func (h *HTTPHybrid) hybrid(c *fiber.Ctx) error {
-	e := utils.WrapHTTPResponse(nil)
-
-	return c.Format(e)
-}
-
-/* }}} */
-
-/*
- * Local variables:
- * tab-width: 4
- * c-basic-offset: 4
- * End:
- * vim600: sw=4 ts=4 fdm=marker
- * vim<600: sw=4 ts=4
- */
+message HybridRequest {
+    string name = 1;
+};
+message HybridResponse {
+    string answer = 2;
+};
