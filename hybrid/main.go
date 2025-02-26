@@ -89,6 +89,9 @@ func main() {
 
 	// Broker
 	natsBrk := brkNats.New(&broker.Options{Name: AppName + "@nats"}, config.Broker.Nats)
+	natsBrk.Handle(
+		handler.NewNatsHybrid(),
+	)
 
 	// Service
 	svc := sicky.New(&service.Options{Name: AppName}, config.Service)
