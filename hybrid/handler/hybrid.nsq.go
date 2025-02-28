@@ -22,45 +22,51 @@
  */
 
 /**
- * @file config.go
- * @package main
+ * @file hybrid.nsq.go
+ * @package handler
  * @author Dr.NP <np@herewe.tech>
- * @since 01/20/2025
+ * @since 02/28/2025
  */
 
-package main
+package handler
 
 import (
-	brkNats "github.com/go-sicky/sicky/broker/nats"
-	brkNsq "github.com/go-sicky/sicky/broker/nsq"
-	"github.com/go-sicky/sicky/runtime"
-	srvGRPC "github.com/go-sicky/sicky/server/grpc"
-	srvHTTP "github.com/go-sicky/sicky/server/http"
-	srvTCP "github.com/go-sicky/sicky/server/tcp"
-	srvUDP "github.com/go-sicky/sicky/server/udp"
-	srvWS "github.com/go-sicky/sicky/server/websocket"
-	"github.com/go-sicky/sicky/service/sicky"
+	"fmt"
+
+	"github.com/go-sicky/sicky/broker"
 )
 
-type ConfigDef struct {
-	Server struct {
-		HTTP      *srvHTTP.Config `json:"http" yaml:"http" mapstructure:"http"`
-		GRPC      *srvGRPC.Config `json:"grpc" yaml:"grpc" mapstructure:"grpc"`
-		Websocket *srvWS.Config   `json:"websocket" yaml:"websocket" mapstructure:"websocket"`
-		UDP       *srvUDP.Config  `json:"udp" yaml:"udp" mapstructure:"udp"`
-		TCP       *srvTCP.Config  `json:"tcp" yaml:"tcp" mapstructure:"tcp"`
-	}
-	Broker struct {
-		Nats *brkNats.Config `json:"nats" yaml:"nats" mapstructure:"nats"`
-		Nsq  *brkNsq.Config  `json:"nsq" yaml:"nsq" mapstructure:"nsq"`
-	}
-	Runtime *runtime.Config `json:"runtime" yaml:"runtime" mapstructure:"runtime"`
-	Service *sicky.Config   `json:"service" yaml:"service" mapstructure:"service"`
+type NsqHybrid struct{}
+
+func NewNsqHybrid() *NsqHybrid {
+	h := &NsqHybrid{}
+
+	return h
 }
 
-var (
-	config ConfigDef
-)
+func (h *NsqHybrid) Name() string {
+	return "hybrid.nsq"
+}
+
+func (h *NsqHybrid) Type() string {
+	return "nsq"
+}
+
+func (h *NsqHybrid) Register() map[string]broker.Handler {
+	return map[string]broker.Handler{
+		"hybrid": h.hybrid,
+	}
+}
+
+/* {{{ [Methods] */
+func (h *NsqHybrid) hybrid(m *broker.Message) error {
+	fmt.Println(m.Body())
+
+	return nil
+}
+
+/*)
+/* }}} */
 
 /*
  * Local variables:

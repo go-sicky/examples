@@ -34,6 +34,7 @@ import (
 	"github.com/go-sicky/example/hybrid/handler"
 	"github.com/go-sicky/sicky/broker"
 	brkNats "github.com/go-sicky/sicky/broker/nats"
+	brkNsq "github.com/go-sicky/sicky/broker/nsq"
 	"github.com/go-sicky/sicky/logger"
 	"github.com/go-sicky/sicky/runtime"
 	"github.com/go-sicky/sicky/server"
@@ -87,15 +88,21 @@ func main() {
 		handler.NewTCPHybrid(),
 	)
 
-	// Broker
+	// Nats broker
 	natsBrk := brkNats.New(&broker.Options{Name: AppName + "@nats"}, config.Broker.Nats)
 	natsBrk.Handle(
 		handler.NewNatsHybrid(),
 	)
 
+	// Nsq broker
+	nsqBrk := brkNsq.New(&broker.Options{Name: AppName + "@nsq"}, config.Broker.Nsq)
+	nsqBrk.Handle(
+		handler.NewNsqHybrid(),
+	)
+
 	// Service
 	svc := sicky.New(&service.Options{Name: AppName}, config.Service)
-	svc.Brokers(natsBrk)
+	svc.Brokers(natsBrk, nsqBrk)
 	svc.Servers(
 		httpSrv,
 		grpcSrv,
