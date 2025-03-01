@@ -30,7 +30,12 @@
 
 package handler
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/go-sicky/examples/web/model"
+	"github.com/go-sicky/sicky/broker"
+	"github.com/go-sicky/sicky/utils"
+	"github.com/gofiber/fiber/v2"
+)
 
 type BrokerHTTP struct {
 }
@@ -42,7 +47,7 @@ func NewBrokerHTTP() *BrokerHTTP {
 }
 
 func (h *BrokerHTTP) Register(app *fiber.App) {
-
+	app.Post("/broker", h.broker).Name("BrokerPostBroker")
 }
 
 func (h *BrokerHTTP) Name() string {
@@ -52,6 +57,22 @@ func (h *BrokerHTTP) Name() string {
 func (h *BrokerHTTP) Type() string {
 	return "http"
 }
+
+/* {{{ [HTTP Handlers] */
+func (h *BrokerHTTP) broker(c *fiber.Ctx) error {
+	v := &model.Person{
+		Name:    "John Doe",
+		Age:     24,
+		Address: "123 Main St",
+	}
+	msg := broker.NewMessage(nil)
+	msg.Format(v, "application/json")
+	broker.Publish("hybrid", msg)
+
+	return c.Format(utils.WrapHTTPResponse(nil))
+}
+
+/* }}} */
 
 /*
  * Local variables:

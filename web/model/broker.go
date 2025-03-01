@@ -22,53 +22,19 @@
  */
 
 /**
- * @file hybrid.nats.go
- * @package handler
+ * @file broker.go
+ * @package model
  * @author Dr.NP <np@herewe.tech>
- * @since 02/26/2025
+ * @since 03/02/2025
  */
 
-package handler
+package model
 
-import (
-	"fmt"
-
-	"github.com/go-sicky/sicky/broker"
-)
-
-type NatsHybrid struct {
+type Person struct {
+	Name    string `json:"name" msgpack:"name"`
+	Age     int    `json:"age" msgpack:"age"`
+	Address string `json:"address" msgpack:"address"`
 }
-
-func NewNatsHybrid() *NatsHybrid {
-	h := &NatsHybrid{}
-
-	return h
-}
-
-func (h *NatsHybrid) Name() string {
-	return "hybrid.nats"
-}
-
-func (h *NatsHybrid) Type() string {
-	return "nats"
-}
-
-func (h *NatsHybrid) Register() map[string]broker.Handler {
-	return map[string]broker.Handler{
-		"hybrid": h.hybrid,
-	}
-}
-
-/* {{{ [Methods] */
-func (h *NatsHybrid) hybrid(m *broker.Message) error {
-	fmt.Println(string(m.Body))
-	fmt.Println(m.Mime)
-
-	return nil
-}
-
-/*)
-/* }}} */
 
 /*
  * Local variables:

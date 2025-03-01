@@ -60,7 +60,7 @@ func (h *NsqHybrid) Register() map[string]broker.Handler {
 
 /* {{{ [Methods] */
 func (h *NsqHybrid) hybrid(m *broker.Message) error {
-	fmt.Println(m.Body())
+	fmt.Println(m.Body)
 
 	return nil
 }

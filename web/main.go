@@ -33,7 +33,6 @@ package main
 import (
 	"github.com/go-sicky/examples/web/handler"
 	brkNats "github.com/go-sicky/sicky/broker/nats"
-	brkNsq "github.com/go-sicky/sicky/broker/nsq"
 	"github.com/go-sicky/sicky/logger"
 	rgConsul "github.com/go-sicky/sicky/registry/consul"
 	rgMdns "github.com/go-sicky/sicky/registry/mdns"
@@ -74,7 +73,6 @@ func main() {
 
 	// Broker
 	brkNats := brkNats.New(nil, config.Broker.Nats)
-	brkNsq := brkNsq.New(nil, config.Broker.Nsq)
 
 	// Registry
 	rgConsul := rgConsul.New(nil, config.Registry.Consul)
@@ -83,7 +81,7 @@ func main() {
 	// Service
 	svc := sicky.New(&service.Options{Name: AppName}, config.Service)
 	svc.Servers(httpSrv, grpcSrv, wsSrv)
-	svc.Brokers(brkNats, brkNsq)
+	svc.Brokers(brkNats)
 	svc.Registries(rgMdns, rgConsul)
 
 	service.Run()
