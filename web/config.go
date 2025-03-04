@@ -44,20 +44,20 @@ import (
 
 type ConfigDef struct {
 	Server struct {
-		GRPC      *srvGRPC.Config      `json:"grpc" yaml:"grpc"`
-		HTTP      *srvHTTP.Config      `json:"http" yaml:"http"`
-		Websocket *srvWebsocket.Config `json:"websocket" yaml:"websocket"`
-	} `json:"server" yaml:"server"`
+		GRPC      *srvGRPC.Config      `json:"grpc" yaml:"grpc" mapstructure:"grpc"`
+		HTTP      *srvHTTP.Config      `json:"http" yaml:"http" mapstructure:"http"`
+		Websocket *srvWebsocket.Config `json:"websocket" yaml:"websocket" mapstructure:"websocket"`
+	} `json:"server" yaml:"server" mapstructure:"server"`
 	Broker struct {
-		Nats *brkNats.Config `json:"nats" yaml:"nats"`
-		Nsq  *brkNsq.Config  `json:"nsq" yaml:"nsq"`
-	} `json:"broker" yaml:"broker"`
+		Nats *brkNats.Config `json:"nats" yaml:"nats" mapstructure:"nats"`
+		Nsq  *brkNsq.Config  `json:"nsq" yaml:"nsq" mapstructure:"nsq"`
+	} `json:"broker" yaml:"broker" mapstructure:"broker"`
 	Registry struct {
-		Consul *rgConsul.Config `json:"consul" yaml:"consul"`
-		Mdns   *rgMdns.Config   `json:"mdns" yaml:"mdns"`
-	} `json:"registry" yaml:"registry"`
+		Consul *rgConsul.Config `json:"consul" yaml:"consul" mapstructure:"consul"`
+		Mdns   *rgMdns.Config   `json:"mdns" yaml:"mdns" mapstructure:"mdns"`
+	} `json:"registry" yaml:"registry" mapstructure:"registry"`
 	Runtime *runtime.Config `json:"runtime" yaml:"runtime" mapstructure:"runtime"`
-	Service *sicky.Config   `json:"service" yaml:"service"`
+	Service *sicky.Config   `json:"service" yaml:"service" mapstructure:"service"`
 }
 
 var (

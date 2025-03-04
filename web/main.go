@@ -62,7 +62,6 @@ func main() {
 	// HTTP server
 	httpSrv := srvHTTP.New(&server.Options{Name: AppName + "@http"}, config.Server.HTTP)
 	httpSrv.Handle(handler.NewCallHTTP())
-	httpSrv.Handle(handler.NewBrokerHTTP())
 
 	// GRPC server
 	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, config.Server.GRPC)

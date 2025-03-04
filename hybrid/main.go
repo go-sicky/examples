@@ -36,6 +36,7 @@ import (
 	brkNats "github.com/go-sicky/sicky/broker/nats"
 	brkNsq "github.com/go-sicky/sicky/broker/nsq"
 	"github.com/go-sicky/sicky/logger"
+	rgConsul "github.com/go-sicky/sicky/registry/consul"
 	"github.com/go-sicky/sicky/runtime"
 	"github.com/go-sicky/sicky/server"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
@@ -100,6 +101,9 @@ func main() {
 		handler.NewNsqHybrid(),
 	)
 
+	// Registry
+	rgConsul := rgConsul.New(nil, config.Registry.Consul)
+
 	// Service
 	svc := sicky.New(&service.Options{Name: AppName}, config.Service)
 	svc.Brokers(natsBrk, nsqBrk)
@@ -110,6 +114,7 @@ func main() {
 		udpSrv,
 		tcpSrv,
 	)
+	svc.Registries(rgConsul)
 	err := service.Run()
 	if err != nil {
 		logger.Fatal(err.Error())

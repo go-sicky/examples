@@ -31,23 +31,41 @@
 package handler
 
 import (
+	"github.com/go-sicky/example/hybrid/proto"
+	"github.com/go-sicky/examples/web/model"
+	"github.com/go-sicky/sicky/broker"
+	grpcClt "github.com/go-sicky/sicky/client/grpc"
 	"github.com/go-sicky/sicky/registry"
 	"github.com/go-sicky/sicky/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
 type CallHTTP struct {
+	hc proto.HybridClient
 }
 
 func NewCallHTTP() *CallHTTP {
-	h := &CallHTTP{}
+	grpcClient := grpcClt.New(
+		nil,
+		&grpcClt.Config{
+			Service: "hybrid.examples.sicky@grpc",
+		},
+	)
+	h := &CallHTTP{
+		hc: proto.NewHybridClient(grpcClient),
+	}
 
 	return h
 }
 
 func (h *CallHTTP) Register(app *fiber.App) {
-	app.Get("/", h.greeter).Name("CallGetGreeter")
+	app.Get("/", h.index).Name("CallGetIndex")
 	app.Get("/pool", h.pool).Name("CallGetPool")
+	app.Get("/routers", h.routers).Name("CallGetRouters")
+	app.Get("/tcp", h.tcp).Name("CallGetTcp")
+	app.Head("/udp", h.udp).Name("CallHeadUdp")
+	app.Get("/grpc", h.grpc).Name("CallGetGrpc")
+	app.Post("/broker", h.broker).Name("BrokerPostBroker")
 }
 
 func (h *CallHTTP) Name() string {
@@ -59,12 +77,56 @@ func (h *CallHTTP) Type() string {
 }
 
 /* {{{ [HTTP handlers] */
-func (h *CallHTTP) greeter(c *fiber.Ctx) error {
-	return c.JSON(utils.WrapHTTPResponse("hello"))
+func (h *CallHTTP) index(c *fiber.Ctx) error {
+	return c.JSON(utils.WrapHTTPResponse(nil))
+}
+
+func (h *CallHTTP) grpc(c *fiber.Ctx) error {
+	e := utils.WrapHTTPResponse(nil)
+	req := &proto.HybridRequest{
+		Name: "John Doe",
+	}
+
+	resp, err := h.hc.Hybrid(c.Context(), req)
+	if err != nil {
+		e.Status = fiber.StatusInternalServerError
+		e.Message = err.Error()
+	} else {
+		e.Data = resp
+	}
+
+	return c.JSON(e)
 }
 
 func (h *CallHTTP) pool(c *fiber.Ctx) error {
 	return c.JSON(utils.WrapHTTPResponse(registry.Pool))
+}
+
+func (h *CallHTTP) routers(c *fiber.Ctx) error {
+	r := c.App().GetRoutes()
+
+	return c.JSON(utils.WrapHTTPResponse(r))
+}
+
+func (h *CallHTTP) tcp(c *fiber.Ctx) error {
+	return c.JSON(utils.WrapHTTPResponse(nil))
+}
+
+func (h *CallHTTP) udp(c *fiber.Ctx) error {
+	return c.JSON(utils.WrapHTTPResponse(nil))
+}
+
+func (h *CallHTTP) broker(c *fiber.Ctx) error {
+	v := &model.Person{
+		Name:    "John Doe",
+		Age:     24,
+		Address: "123 Main St",
+	}
+	msg := broker.NewMessage(nil)
+	msg.Format(v, broker.MsgJson)
+	broker.Publish("hybrid", msg)
+
+	return c.Format(utils.WrapHTTPResponse(nil))
 }
 
 /* }}} */

@@ -33,6 +33,7 @@ package main
 import (
 	brkNats "github.com/go-sicky/sicky/broker/nats"
 	brkNsq "github.com/go-sicky/sicky/broker/nsq"
+	rgConsul "github.com/go-sicky/sicky/registry/consul"
 	"github.com/go-sicky/sicky/runtime"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	srvHTTP "github.com/go-sicky/sicky/server/http"
@@ -53,6 +54,9 @@ type ConfigDef struct {
 	Broker struct {
 		Nats *brkNats.Config `json:"nats" yaml:"nats" mapstructure:"nats"`
 		Nsq  *brkNsq.Config  `json:"nsq" yaml:"nsq" mapstructure:"nsq"`
+	}
+	Registry struct {
+		Consul *rgConsul.Config `json:"consul" yaml:"consul" mapstructure:"consul"`
 	}
 	Runtime *runtime.Config `json:"runtime" yaml:"runtime" mapstructure:"runtime"`
 	Service *sicky.Config   `json:"service" yaml:"service" mapstructure:"service"`
