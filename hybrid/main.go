@@ -49,7 +49,7 @@ import (
 )
 
 const (
-	AppName = "hybrid.examnples.sicky"
+	AppName = "hybrid.examples.sicky"
 	Version = "latest"
 )
 
