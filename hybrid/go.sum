@@ -88,6 +88,8 @@ github.com/go-openapi/swag v0.23.0 h1:vsEVJDUo2hPJ2tu0/Xc+4noaxyEffXNIs3cOULZ+Gr
 github.com/go-openapi/swag v0.23.0/go.mod h1:esZ8ITTYEsH1V2trKHjAN8Ai7xHb8RV+YSZ577vPjgQ=
 github.com/go-sicky/sicky v0.0.0-20250223082615-276db075c777 h1:5ZMXiknmZtaTd6MbRgt9dbgQeS4GqZa5WtoAMrt9y0Y=
 github.com/go-sicky/sicky v0.0.0-20250223082615-276db075c777/go.mod h1:BsQirz74fIZQkKscCp8t8vTEU2byMqUNLxpViOYVtmM=
+github.com/go-sicky/sicky v0.0.0-20250306085522-cd01b4b3370f h1:9hRVDVmv1+uZuI7FtP678Ze/A67pE6sRl3AsIYCa6m0=
+github.com/go-sicky/sicky v0.0.0-20250306085522-cd01b4b3370f/go.mod h1:xMOU+hWOHEiIO8GwSvaz5U9JO30KHqG+DxzTJQeLNzk=
 github.com/go-sql-driver/mysql v1.9.0 h1:Y0zIbQXhQKmQgTp44Y1dp3wTXcn804QoTptLZT1vtvo=
 github.com/go-sql-driver/mysql v1.9.0/go.mod h1:pDetrLJeA3oMujJuvXc8RJoasr589B6A9fwzD3QMrqw=
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=

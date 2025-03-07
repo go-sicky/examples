@@ -31,6 +31,7 @@
 package main
 
 import (
+	brkJetstream "github.com/go-sicky/sicky/broker/jetstream"
 	brkNats "github.com/go-sicky/sicky/broker/nats"
 	brkNsq "github.com/go-sicky/sicky/broker/nsq"
 	rgConsul "github.com/go-sicky/sicky/registry/consul"
@@ -49,8 +50,9 @@ type ConfigDef struct {
 		Websocket *srvWebsocket.Config `json:"websocket" yaml:"websocket" mapstructure:"websocket"`
 	} `json:"server" yaml:"server" mapstructure:"server"`
 	Broker struct {
-		Nats *brkNats.Config `json:"nats" yaml:"nats" mapstructure:"nats"`
-		Nsq  *brkNsq.Config  `json:"nsq" yaml:"nsq" mapstructure:"nsq"`
+		Nats      *brkNats.Config      `json:"nats" yaml:"nats" mapstructure:"nats"`
+		Nsq       *brkNsq.Config       `json:"nsq" yaml:"nsq" mapstructure:"nsq"`
+		Jetstream *brkJetstream.Config `json:"jetstream" yaml:"jetstream" mapstructure:"jetstream"`
 	} `json:"broker" yaml:"broker" mapstructure:"broker"`
 	Registry struct {
 		Consul *rgConsul.Config `json:"consul" yaml:"consul" mapstructure:"consul"`

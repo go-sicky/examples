@@ -33,6 +33,7 @@ package main
 import (
 	"github.com/go-sicky/example/hybrid/handler"
 	"github.com/go-sicky/sicky/broker"
+	brkJetstream "github.com/go-sicky/sicky/broker/jetstream"
 	brkNats "github.com/go-sicky/sicky/broker/nats"
 	brkNsq "github.com/go-sicky/sicky/broker/nsq"
 	"github.com/go-sicky/sicky/logger"
@@ -99,6 +100,12 @@ func main() {
 	nsqBrk := brkNsq.New(&broker.Options{Name: AppName + "@nsq"}, config.Broker.Nsq)
 	nsqBrk.Handle(
 		handler.NewNsqHybrid(),
+	)
+
+	// Jetstream broker
+	jetstreamBrk := brkJetstream.New(&broker.Options{Name: AppName + "@jetstream"}, config.Broker.Jetstream)
+	jetstreamBrk.Handle(
+		handler.NewJetstreamHybrid(),
 	)
 
 	// Registry

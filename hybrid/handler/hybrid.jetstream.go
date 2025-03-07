@@ -22,10 +22,10 @@
  */
 
 /**
- * @file hybrid.nats.go
+ * @file hybrid.jetstream.go
  * @package handler
  * @author Dr.NP <np@herewe.tech>
- * @since 02/26/2025
+ * @since 03/07/2025
  */
 
 package handler
@@ -36,30 +36,30 @@ import (
 	"github.com/go-sicky/sicky/broker"
 )
 
-type NatsHybrid struct{}
+type JetstreamHybrid struct{}
 
-func NewNatsHybrid() *NatsHybrid {
-	h := &NatsHybrid{}
+func NewJetstreamHybrid() *JetstreamHybrid {
+	h := &JetstreamHybrid{}
 
 	return h
 }
 
-func (h *NatsHybrid) Name() string {
-	return "hybrid.nats"
+func (h *JetstreamHybrid) Name() string {
+	return "hybrid.jetstream"
 }
 
-func (h *NatsHybrid) Type() string {
-	return "nats"
+func (h *JetstreamHybrid) Type() string {
+	return "jetstream"
 }
 
-func (h *NatsHybrid) Register() map[string]broker.Handler {
+func (h *JetstreamHybrid) Register() map[string]broker.Handler {
 	return map[string]broker.Handler{
 		"hybrid": h.hybrid,
 	}
 }
 
 /* {{{ [Methods] */
-func (h *NatsHybrid) hybrid(m *broker.Message) error {
+func (h *JetstreamHybrid) hybrid(m *broker.Message) error {
 	fmt.Println(string(m.Body))
 	fmt.Println(m.Mime)
 

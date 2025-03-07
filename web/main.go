@@ -32,7 +32,7 @@ package main
 
 import (
 	"github.com/go-sicky/examples/web/handler"
-	brkNats "github.com/go-sicky/sicky/broker/nats"
+	brkJetstream "github.com/go-sicky/sicky/broker/jetstream"
 	"github.com/go-sicky/sicky/logger"
 	rgConsul "github.com/go-sicky/sicky/registry/consul"
 	rgMdns "github.com/go-sicky/sicky/registry/mdns"
@@ -71,7 +71,8 @@ func main() {
 	wsSrv := srvWebsocket.New(&server.Options{Name: AppName + "@websocket"}, config.Server.Websocket)
 
 	// Broker
-	brkNats := brkNats.New(nil, config.Broker.Nats)
+	//brkNats := brkNats.New(nil, config.Broker.Nats)
+	brkJetstream := brkJetstream.New(nil, config.Broker.Jetstream)
 
 	// Registry
 	rgConsul := rgConsul.New(nil, config.Registry.Consul)
@@ -80,7 +81,7 @@ func main() {
 	// Service
 	svc := sicky.New(&service.Options{Name: AppName}, config.Service)
 	svc.Servers(httpSrv, grpcSrv, wsSrv)
-	svc.Brokers(brkNats)
+	svc.Brokers(brkJetstream)
 	svc.Registries(rgMdns, rgConsul)
 
 	service.Run()
