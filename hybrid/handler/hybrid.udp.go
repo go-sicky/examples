@@ -32,7 +32,9 @@ package handler
 
 import (
 	"bytes"
-	"net"
+	"fmt"
+
+	srvUDP "github.com/go-sicky/sicky/server/udp"
 )
 
 type UDPHybrid struct{}
@@ -51,15 +53,21 @@ func (h *UDPHybrid) Type() string {
 	return "udp"
 }
 
-func (h *UDPHybrid) OnData(c *net.UDPConn, addr *net.UDPAddr, data []byte) error {
+func (h *UDPHybrid) OnConnect(sess *srvUDP.Session) error {
+	fmt.Println(sess.ID, sess.Addr().String(), "connected")
+
+	return nil
+}
+
+func (h *UDPHybrid) OnData(sess *srvUDP.Session, data []byte) error {
+	fmt.Println(sess.ID, sess.Addr().String(), "say", string(data))
+
 	var resp bytes.Buffer
 
 	resp.WriteString("Yes! ")
 	resp.Write(data)
 
-	_, err := c.WriteToUDP(resp.Bytes(), addr)
-
-	return err
+	return sess.Send(resp.Bytes())
 }
 
 /*

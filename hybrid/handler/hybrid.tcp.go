@@ -33,7 +33,8 @@ package handler
 import (
 	"bytes"
 	"fmt"
-	"net"
+
+	srvTCP "github.com/go-sicky/sicky/server/tcp"
 )
 
 type TCPHybrid struct{}
@@ -52,34 +53,33 @@ func (h *TCPHybrid) Type() string {
 	return "tcp"
 }
 
-func (h *TCPHybrid) OnConnect(c net.Conn) error {
-	fmt.Println(c.RemoteAddr().String(), "connected")
+func (h *TCPHybrid) OnConnect(sess *srvTCP.Session) error {
+	fmt.Println(sess.ID, sess.Conn().RemoteAddr().String(), "connected")
 
 	return nil
 }
 
-func (h *TCPHybrid) OnClose(c net.Conn) error {
-	fmt.Println(c.RemoteAddr().String(), "closed")
+func (h *TCPHybrid) OnClose(sess *srvTCP.Session) error {
+	fmt.Println(sess.ID, sess.Conn().RemoteAddr().String(), "closed")
 
 	return nil
 }
 
-func (h *TCPHybrid) OnError(c net.Conn, err error) error {
-	fmt.Println(c.RemoteAddr().String(), "error", err.Error())
+func (h *TCPHybrid) OnError(sess *srvTCP.Session, err error) error {
+	fmt.Println(sess.ID, sess.Conn().RemoteAddr().String(), "error", err.Error())
 
 	return err
 }
 
-func (h *TCPHybrid) OnData(c net.Conn, data []byte) error {
-	fmt.Println(c.RemoteAddr().String(), "say", string(data))
+func (h *TCPHybrid) OnData(sess *srvTCP.Session, data []byte) error {
+	fmt.Println(sess.ID, sess.Conn().RemoteAddr().String(), "say", string(data))
 
 	var resp bytes.Buffer
 
 	resp.WriteString("Yes! ")
 	resp.Write(data)
-	_, err := c.Write(resp.Bytes())
 
-	return err
+	return sess.Send(resp.Bytes())
 }
 
 /*

@@ -34,7 +34,7 @@ import (
 	"bytes"
 	"fmt"
 
-	"github.com/gofiber/contrib/websocket"
+	srvWebsocket "github.com/go-sicky/sicky/server/websocket"
 )
 
 type WSHybrid struct{}
@@ -53,34 +53,33 @@ func (h *WSHybrid) Type() string {
 	return "websocket"
 }
 
-func (h *WSHybrid) OnConnect(c *websocket.Conn) error {
-	fmt.Println(c.RemoteAddr().String(), "connected")
+func (h *WSHybrid) OnConnect(sess *srvWebsocket.Session) error {
+	fmt.Println(sess.ID, sess.Conn().RemoteAddr().String(), "connected")
 
 	return nil
 }
 
-func (h *WSHybrid) OnClose(c *websocket.Conn) error {
-	fmt.Println(c.RemoteAddr().String(), "closed")
+func (h *WSHybrid) OnClose(sess *srvWebsocket.Session) error {
+	fmt.Println(sess.ID, sess.Conn().RemoteAddr().String(), "closed")
 
 	return nil
 }
 
-func (h *WSHybrid) OnError(c *websocket.Conn, err error) error {
-	fmt.Println(c.RemoteAddr().String(), "error", err.Error())
+func (h *WSHybrid) OnError(sess *srvWebsocket.Session, err error) error {
+	fmt.Println(sess.ID, sess.Conn().RemoteAddr().String(), "error", err.Error())
 
 	return err
 }
 
-func (h *WSHybrid) OnData(c *websocket.Conn, msgType int, data []byte) error {
-	fmt.Println(c.RemoteAddr().String(), "say", string(data))
+func (h *WSHybrid) OnData(sess *srvWebsocket.Session, msgType int, data []byte) error {
+	fmt.Println(sess.ID, sess.Conn().RemoteAddr().String(), "say", string(data))
 
 	var resp bytes.Buffer
 
 	resp.WriteString("Yes! ")
 	resp.Write(data)
-	err := c.WriteMessage(msgType, resp.Bytes())
 
-	return err
+	return sess.Send(msgType, resp.Bytes())
 }
 
 /*

@@ -31,6 +31,9 @@
 package main
 
 import (
+	"fmt"
+	"time"
+
 	"github.com/go-sicky/examples/web/handler"
 	brkJetstream "github.com/go-sicky/sicky/broker/jetstream"
 	"github.com/go-sicky/sicky/logger"
@@ -83,6 +86,12 @@ func main() {
 	svc.Servers(httpSrv, grpcSrv, wsSrv)
 	svc.Brokers(brkJetstream)
 	svc.Registries(rgMdns, rgConsul)
+
+	runtime.HandleTicker(func(t time.Time, counter uint64) error {
+		fmt.Println(t.String(), "大哥你几个菜喝成这样？", counter)
+
+		return nil
+	})
 
 	service.Run()
 }
