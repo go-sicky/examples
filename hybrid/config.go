@@ -38,6 +38,7 @@ import (
 	"github.com/go-sicky/sicky/runtime"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	srvHTTP "github.com/go-sicky/sicky/server/http"
+	srvOriginal "github.com/go-sicky/sicky/server/original"
 	srvTCP "github.com/go-sicky/sicky/server/tcp"
 	srvUDP "github.com/go-sicky/sicky/server/udp"
 	srvWS "github.com/go-sicky/sicky/server/websocket"
@@ -46,11 +47,12 @@ import (
 
 type ConfigDef struct {
 	Server struct {
-		HTTP      *srvHTTP.Config `json:"http" yaml:"http" mapstructure:"http"`
-		GRPC      *srvGRPC.Config `json:"grpc" yaml:"grpc" mapstructure:"grpc"`
-		Websocket *srvWS.Config   `json:"websocket" yaml:"websocket" mapstructure:"websocket"`
-		UDP       *srvUDP.Config  `json:"udp" yaml:"udp" mapstructure:"udp"`
-		TCP       *srvTCP.Config  `json:"tcp" yaml:"tcp" mapstructure:"tcp"`
+		HTTP      *srvHTTP.Config     `json:"http" yaml:"http" mapstructure:"http"`
+		Original  *srvOriginal.Config `json:"original" yaml:"original" mapstructure:"original"`
+		GRPC      *srvGRPC.Config     `json:"grpc" yaml:"grpc" mapstructure:"grpc"`
+		Websocket *srvWS.Config       `json:"websocket" yaml:"websocket" mapstructure:"websocket"`
+		UDP       *srvUDP.Config      `json:"udp" yaml:"udp" mapstructure:"udp"`
+		TCP       *srvTCP.Config      `json:"tcp" yaml:"tcp" mapstructure:"tcp"`
 	}
 	Broker struct {
 		Nats      *brkNats.Config      `json:"nats" yaml:"nats" mapstructure:"nats"`

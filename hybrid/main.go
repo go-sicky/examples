@@ -42,6 +42,7 @@ import (
 	"github.com/go-sicky/sicky/server"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	srvHTTP "github.com/go-sicky/sicky/server/http"
+	srvOriginal "github.com/go-sicky/sicky/server/original"
 	srvTCP "github.com/go-sicky/sicky/server/tcp"
 	srvUDP "github.com/go-sicky/sicky/server/udp"
 	srvWebsocket "github.com/go-sicky/sicky/server/websocket"
@@ -65,6 +66,9 @@ func main() {
 	httpSrv.Handle(
 		handler.NewHTTPHybrid(),
 	)
+
+	// Original server
+	originalSrv := srvOriginal.New(&server.Options{Name: AppName + "@original"}, config.Server.Original)
 
 	// GRPC server
 	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, config.Server.GRPC)
@@ -116,6 +120,7 @@ func main() {
 	svc.Brokers(natsBrk, nsqBrk)
 	svc.Servers(
 		httpSrv,
+		originalSrv,
 		grpcSrv,
 		wsSrv,
 		udpSrv,
