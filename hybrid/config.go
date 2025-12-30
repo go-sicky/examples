@@ -31,44 +31,30 @@
 package main
 
 import (
-	brkJetstream "github.com/go-sicky/sicky/broker/jetstream"
-	brkNats "github.com/go-sicky/sicky/broker/nats"
-	brkNsq "github.com/go-sicky/sicky/broker/nsq"
-	rgConsul "github.com/go-sicky/sicky/registry/consul"
-	"github.com/go-sicky/sicky/runtime"
+	"github.com/go-sicky/sicky"
+	srvFiber "github.com/go-sicky/sicky/server/fiber"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	srvHTTP "github.com/go-sicky/sicky/server/http"
-	srvOriginal "github.com/go-sicky/sicky/server/original"
 	srvTCP "github.com/go-sicky/sicky/server/tcp"
 	srvUDP "github.com/go-sicky/sicky/server/udp"
 	srvWS "github.com/go-sicky/sicky/server/websocket"
-	"github.com/go-sicky/sicky/service/sicky"
+	"github.com/go-sicky/sicky/service/standard"
 )
 
 type ConfigDef struct {
 	Server struct {
-		HTTP      *srvHTTP.Config     `json:"http" yaml:"http" mapstructure:"http"`
-		Original  *srvOriginal.Config `json:"original" yaml:"original" mapstructure:"original"`
-		GRPC      *srvGRPC.Config     `json:"grpc" yaml:"grpc" mapstructure:"grpc"`
-		Websocket *srvWS.Config       `json:"websocket" yaml:"websocket" mapstructure:"websocket"`
-		UDP       *srvUDP.Config      `json:"udp" yaml:"udp" mapstructure:"udp"`
-		TCP       *srvTCP.Config      `json:"tcp" yaml:"tcp" mapstructure:"tcp"`
+		HTTP      *srvHTTP.Config  `json:"http" yaml:"http" mapstructure:"http"`
+		Fiber     *srvFiber.Config `json:"fiber" yaml:"fiber" mapstructure:"fiber"`
+		GRPC      *srvGRPC.Config  `json:"grpc" yaml:"grpc" mapstructure:"grpc"`
+		Websocket *srvWS.Config    `json:"websocket" yaml:"websocket" mapstructure:"websocket"`
+		UDP       *srvUDP.Config   `json:"udp" yaml:"udp" mapstructure:"udp"`
+		TCP       *srvTCP.Config   `json:"tcp" yaml:"tcp" mapstructure:"tcp"`
 	}
-	Broker struct {
-		Nats      *brkNats.Config      `json:"nats" yaml:"nats" mapstructure:"nats"`
-		Nsq       *brkNsq.Config       `json:"nsq" yaml:"nsq" mapstructure:"nsq"`
-		Jetstream *brkJetstream.Config `json:"jetstream" yaml:"jetstream" mapstructure:"jetstream"`
-	}
-	Registry struct {
-		Consul *rgConsul.Config `json:"consul" yaml:"consul" mapstructure:"consul"`
-	}
-	Runtime *runtime.Config `json:"runtime" yaml:"runtime" mapstructure:"runtime"`
-	Service *sicky.Config   `json:"service" yaml:"service" mapstructure:"service"`
+	Service *standard.Config `json:"service" yaml:"service" mapstructure:"service"`
+	Sicky   *sicky.Config    `json:"sicky" yaml:"sicky" mapstructure:"sicky"`
 }
 
-var (
-	config ConfigDef
-)
+var config ConfigDef
 
 /*
  * Local variables:

@@ -31,34 +31,20 @@
 package main
 
 import (
-	brkNats "github.com/go-sicky/sicky/broker/nats"
-	brkNsq "github.com/go-sicky/sicky/broker/nsq"
-	rgConsul "github.com/go-sicky/sicky/registry/consul"
-	rgMdns "github.com/go-sicky/sicky/registry/mdns"
-	"github.com/go-sicky/sicky/runtime"
+	"github.com/go-sicky/sicky"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
-	"github.com/go-sicky/sicky/service/sicky"
+	"github.com/go-sicky/sicky/service/standard"
 )
 
 type ConfigDef struct {
 	Server struct {
-		GRPC *srvGRPC.Config `json:"grpc" yaml:"grpc"`
-	} `json:"server" yaml:"server"`
-	Broker struct {
-		Nats *brkNats.Config `json:"nats" yaml:"nats"`
-		Nsq  *brkNsq.Config  `json:"nsq" yaml:"nsq"`
-	} `json:"broker" yaml:"broker"`
-	Registry struct {
-		Consul *rgConsul.Config `json:"consul" yaml:"consul"`
-		Mdns   *rgMdns.Config   `json:"mdns" yaml:"mdns"`
-	} `json:"registry" yaml:"registry"`
-	Runtime *runtime.Config `json:"runtime" yaml:"runtime" mapstructure:"runtime"`
-	Service *sicky.Config   `json:"service" yaml:"service"`
+		GRPC *srvGRPC.Config `json:"grpc" yaml:"grpc" mapstructure:"grpc"`
+	} `json:"server" yaml:"server" mapstructure:"server"`
+	Service *standard.Config `json:"service" yaml:"service" mapstructure:"service"`
+	Sicky   *sicky.Config    `json:"sicky" yaml:"sicky" mapstructure:"sicky"`
 }
 
-var (
-	config ConfigDef
-)
+var config ConfigDef
 
 /*
  * Local variables:

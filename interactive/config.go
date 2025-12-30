@@ -31,18 +31,16 @@
 package main
 
 import (
-	"github.com/go-sicky/sicky/runtime"
+	"github.com/go-sicky/sicky"
 	"github.com/go-sicky/sicky/service/interactive"
 )
 
 type ConfigDef struct {
-	Runtime *runtime.Config     `json:"runtime" yaml:"runtime" mapstructure:"runtime"`
-	Service *interactive.Config `json:"service" yaml:"service"`
+	Service *interactive.Config `json:"service" yaml:"service" mapstructure:"service"`
+	Sicky   *sicky.Config       `json:"sicky" yaml:"sicky" mapstructure:"sicky"`
 }
 
-var (
-	config ConfigDef
-)
+var config ConfigDef
 
 /*
  * Local variables:

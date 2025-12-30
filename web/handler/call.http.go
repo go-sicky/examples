@@ -35,7 +35,6 @@ import (
 	"github.com/go-sicky/examples/web/model"
 	"github.com/go-sicky/sicky/broker"
 	grpcClt "github.com/go-sicky/sicky/client/grpc"
-	"github.com/go-sicky/sicky/registry"
 	"github.com/go-sicky/sicky/utils"
 	"github.com/gofiber/fiber/v2"
 )
@@ -99,7 +98,8 @@ func (h *CallHTTP) grpc(c *fiber.Ctx) error {
 }
 
 func (h *CallHTTP) pool(c *fiber.Ctx) error {
-	return c.JSON(utils.WrapHTTPResponse(registry.Pool))
+	// return c.JSON(utils.WrapHTTPResponse(registry.Pool))
+	return nil
 }
 
 func (h *CallHTTP) routers(c *fiber.Ctx) error {

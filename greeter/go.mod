@@ -1,6 +1,6 @@
 module github.com/go-sicky/examples/greeter
 
-go 1.24.0
+go 1.25.0
 
 require (
 	github.com/go-sicky/sicky v0.0.0-20250223082615-276db075c777

@@ -31,69 +31,78 @@
 package main
 
 import (
-	"fmt"
-	"time"
+	"context"
 
 	"github.com/go-sicky/examples/web/handler"
-	brkJetstream "github.com/go-sicky/sicky/broker/jetstream"
-	"github.com/go-sicky/sicky/logger"
-	rgConsul "github.com/go-sicky/sicky/registry/consul"
-	rgMdns "github.com/go-sicky/sicky/registry/mdns"
-	"github.com/go-sicky/sicky/runtime"
+	"github.com/go-sicky/sicky"
 	"github.com/go-sicky/sicky/server"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	srvHTTP "github.com/go-sicky/sicky/server/http"
 	srvWebsocket "github.com/go-sicky/sicky/server/websocket"
 	"github.com/go-sicky/sicky/service"
-	"github.com/go-sicky/sicky/service/sicky"
+	"github.com/go-sicky/sicky/service/standard"
 )
 
-const (
-	AppName = "web.examples.sicky"
-	Version = "latest"
+var (
+	AppName   = "web.example.sicky"
+	Version   = "latest"
+	Branch    = "main"
+	Commit    = ""
+	BuildTime = ""
 )
 
 func main() {
-	// Runtime
-	runtime.Init(AppName)
-	runtime.LoadConfig(&config)
-	runtime.Start(config.Runtime)
+	ctx := context.Background()
 
-	// Logger
-	logger.Logger.Level(logger.DebugLevel)
+	// Sicky
+	sicky.Init(
+		&sicky.Options{
+			AppName:   AppName,
+			Version:   Version,
+			Branch:    Branch,
+			Commit:    Commit,
+			BuildTime: BuildTime,
+			Context:   ctx,
+		},
+		&config,
+	)
 
 	// HTTP server
-	httpSrv := srvHTTP.New(&server.Options{Name: AppName + "@http"}, config.Server.HTTP)
-	httpSrv.Handle(handler.NewCallHTTP())
+	httpSrv := srvHTTP.New(
+		&server.Options{
+			Name:    AppName + "@http",
+			Context: ctx,
+		}, config.Server.HTTP,
+	)
+	// httpSrv.Handle(handler.NewCallHTTP())
 
 	// GRPC server
-	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, config.Server.GRPC)
+	grpcSrv := srvGRPC.New(
+		&server.Options{
+			Name:    AppName + "@grpc",
+			Context: ctx,
+		}, config.Server.GRPC,
+	)
 	grpcSrv.Handle(handler.NewWebGRPC())
 
 	// Websocket server
-	wsSrv := srvWebsocket.New(&server.Options{Name: AppName + "@websocket"}, config.Server.Websocket)
-
-	// Broker
-	//brkNats := brkNats.New(nil, config.Broker.Nats)
-	brkJetstream := brkJetstream.New(nil, config.Broker.Jetstream)
-
-	// Registry
-	rgConsul := rgConsul.New(nil, config.Registry.Consul)
-	rgMdns := rgMdns.New(nil, config.Registry.Mdns)
+	wsSrv := srvWebsocket.New(
+		&server.Options{
+			Name:    AppName + "@websocket",
+			Context: ctx,
+		}, config.Server.Websocket,
+	)
 
 	// Service
-	svc := sicky.New(&service.Options{Name: AppName}, config.Service)
+	svc := standard.New(
+		&service.Options{
+			Name:    AppName,
+			Context: ctx,
+		}, config.Service,
+	)
 	svc.Servers(httpSrv, grpcSrv, wsSrv)
-	svc.Brokers(brkJetstream)
-	svc.Registries(rgMdns, rgConsul)
 
-	runtime.HandleTicker(func(t time.Time, counter uint64) error {
-		fmt.Println(t.String(), "大哥你几个菜喝成这样？", counter)
-
-		return nil
-	})
-
-	service.Run()
+	sicky.Run(config.Sicky)
 }
 
 /*

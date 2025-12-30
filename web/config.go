@@ -31,16 +31,11 @@
 package main
 
 import (
-	brkJetstream "github.com/go-sicky/sicky/broker/jetstream"
-	brkNats "github.com/go-sicky/sicky/broker/nats"
-	brkNsq "github.com/go-sicky/sicky/broker/nsq"
-	rgConsul "github.com/go-sicky/sicky/registry/consul"
-	rgMdns "github.com/go-sicky/sicky/registry/mdns"
-	"github.com/go-sicky/sicky/runtime"
+	"github.com/go-sicky/sicky"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	srvHTTP "github.com/go-sicky/sicky/server/http"
 	srvWebsocket "github.com/go-sicky/sicky/server/websocket"
-	"github.com/go-sicky/sicky/service/sicky"
+	"github.com/go-sicky/sicky/service/standard"
 )
 
 type ConfigDef struct {
@@ -49,22 +44,11 @@ type ConfigDef struct {
 		HTTP      *srvHTTP.Config      `json:"http" yaml:"http" mapstructure:"http"`
 		Websocket *srvWebsocket.Config `json:"websocket" yaml:"websocket" mapstructure:"websocket"`
 	} `json:"server" yaml:"server" mapstructure:"server"`
-	Broker struct {
-		Nats      *brkNats.Config      `json:"nats" yaml:"nats" mapstructure:"nats"`
-		Nsq       *brkNsq.Config       `json:"nsq" yaml:"nsq" mapstructure:"nsq"`
-		Jetstream *brkJetstream.Config `json:"jetstream" yaml:"jetstream" mapstructure:"jetstream"`
-	} `json:"broker" yaml:"broker" mapstructure:"broker"`
-	Registry struct {
-		Consul *rgConsul.Config `json:"consul" yaml:"consul" mapstructure:"consul"`
-		Mdns   *rgMdns.Config   `json:"mdns" yaml:"mdns" mapstructure:"mdns"`
-	} `json:"registry" yaml:"registry" mapstructure:"registry"`
-	Runtime *runtime.Config `json:"runtime" yaml:"runtime" mapstructure:"runtime"`
-	Service *sicky.Config   `json:"service" yaml:"service" mapstructure:"service"`
+	Service *standard.Config `json:"service" yaml:"service" mapstructure:"service"`
+	Sicky   *sicky.Config    `json:"sicky" yaml:"sicky" mapstructure:"sicky"`
 }
 
-var (
-	config ConfigDef
-)
+var config ConfigDef
 
 /*
  * Local variables:

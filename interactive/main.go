@@ -31,35 +31,50 @@
 package main
 
 import (
+	"context"
+
 	"github.com/go-sicky/examples/interactive/handler"
-	"github.com/go-sicky/sicky/logger"
-	"github.com/go-sicky/sicky/runtime"
+	"github.com/go-sicky/sicky"
 	"github.com/go-sicky/sicky/service"
 	"github.com/go-sicky/sicky/service/interactive"
 )
 
-const (
-	AppName = "interactive.examples.sicky"
-	Version = "latest"
+var (
+	AppName   = "interactive.example.sicky"
+	Version   = "latest"
+	Branch    = "main"
+	Commit    = ""
+	BuildTime = ""
 )
 
 func main() {
-	// Logger
-	logger.Logger.Level(logger.SilenceLevel)
+	ctx := context.Background()
 
-	// Runtime
-	runtime.Init(AppName)
-	runtime.Silence()
-	runtime.LoadConfig(&config)
-	runtime.Start(config.Runtime)
+	// Sicky
+	sicky.Init(
+		&sicky.Options{
+			AppName:   AppName,
+			Version:   Version,
+			Branch:    Branch,
+			Commit:    Commit,
+			BuildTime: BuildTime,
+			Context:   ctx,
+		},
+		&config,
+	)
 
 	// Service
-	svc := interactive.New(&service.Options{Name: AppName}, config.Service)
+	svc := interactive.New(
+		&service.Options{
+			Name:    AppName,
+			Context: ctx,
+		}, config.Service,
+	)
 	svc.Handle(
 		handler.NewService(),
 	)
 
-	service.Run()
+	sicky.Run(config.Sicky)
 }
 
 /*

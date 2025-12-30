@@ -31,106 +31,124 @@
 package main
 
 import (
+	"context"
+
 	"github.com/go-sicky/example/hybrid/handler"
-	"github.com/go-sicky/sicky/broker"
-	brkJetstream "github.com/go-sicky/sicky/broker/jetstream"
-	brkNats "github.com/go-sicky/sicky/broker/nats"
-	brkNsq "github.com/go-sicky/sicky/broker/nsq"
-	"github.com/go-sicky/sicky/logger"
-	rgConsul "github.com/go-sicky/sicky/registry/consul"
-	"github.com/go-sicky/sicky/runtime"
+	"github.com/go-sicky/sicky"
 	"github.com/go-sicky/sicky/server"
+	srvFiber "github.com/go-sicky/sicky/server/fiber"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	srvHTTP "github.com/go-sicky/sicky/server/http"
-	srvOriginal "github.com/go-sicky/sicky/server/original"
 	srvTCP "github.com/go-sicky/sicky/server/tcp"
 	srvUDP "github.com/go-sicky/sicky/server/udp"
 	srvWebsocket "github.com/go-sicky/sicky/server/websocket"
 	"github.com/go-sicky/sicky/service"
-	"github.com/go-sicky/sicky/service/sicky"
+	"github.com/go-sicky/sicky/service/standard"
 )
 
-const (
-	AppName = "hybrid.examples.sicky"
-	Version = "latest"
+var (
+	AppName   = "hybrid.example.sicky"
+	Version   = "latest"
+	Branch    = "main"
+	Commit    = ""
+	BuildTime = ""
 )
 
 func main() {
-	// Runtime
-	runtime.Init(AppName)
-	runtime.LoadConfig(&config)
-	runtime.Start(config.Runtime)
+	ctx := context.Background()
+
+	// Sicky
+	sicky.Init(
+		&sicky.Options{
+			AppName:   AppName,
+			Version:   Version,
+			Branch:    Branch,
+			Commit:    Commit,
+			BuildTime: BuildTime,
+			Context:   ctx,
+		},
+		&config,
+	)
 
 	// HTTP server
-	httpSrv := srvHTTP.New(&server.Options{Name: AppName + "@http"}, config.Server.HTTP)
-	httpSrv.Handle(
-		handler.NewHTTPHybrid(),
+	httpSrv := srvHTTP.New(
+		&server.Options{
+			Name:    AppName + "@http",
+			Context: ctx,
+		}, config.Server.HTTP,
 	)
 
 	// Original server
-	originalSrv := srvOriginal.New(&server.Options{Name: AppName + "@original"}, config.Server.Original)
+	fiberSrv := srvFiber.New(
+		&server.Options{
+			Name:    AppName + "@fiber",
+			Context: ctx,
+		}, config.Server.Fiber,
+	)
+	fiberSrv.Handle(
+		handler.NewHTTPHybrid(),
+	)
 
 	// GRPC server
-	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, config.Server.GRPC)
+	grpcSrv := srvGRPC.New(
+		&server.Options{
+			Name:    AppName + "@grpc",
+			Context: ctx,
+		}, config.Server.GRPC)
 	grpcSrv.Handle(
 		handler.NewGRPCHybrid(),
 	)
 
 	// Websocket server
-	wsSrv := srvWebsocket.New(&server.Options{Name: AppName + "@websocket"}, config.Server.Websocket)
+	wsSrv := srvWebsocket.New(
+		&server.Options{
+			Name:    AppName + "@websocket",
+			Context: ctx,
+		}, config.Server.Websocket,
+	)
 	wsSrv.Handle(
 		handler.NewWSHybrid(),
 	)
 
 	// UDP server
-	udpSrv := srvUDP.New(&server.Options{Name: AppName + "@udp"}, config.Server.UDP)
+	udpSrv := srvUDP.New(
+		&server.Options{
+			Name:    AppName + "@udp",
+			Context: ctx,
+		}, config.Server.UDP,
+	)
 	udpSrv.Handle(
 		handler.NewUDPHybrid(),
 	)
 
 	// TCP server
-	tcpSrv := srvTCP.New(&server.Options{Name: AppName + "@tcp"}, config.Server.TCP)
+	tcpSrv := srvTCP.New(
+		&server.Options{
+			Name:    AppName + "@tcp",
+			Context: ctx,
+		}, config.Server.TCP,
+	)
 	tcpSrv.Handle(
 		handler.NewTCPHybrid(),
 	)
 
-	// Nats broker
-	natsBrk := brkNats.New(&broker.Options{Name: AppName + "@nats"}, config.Broker.Nats)
-	natsBrk.Handle(
-		handler.NewNatsHybrid(),
-	)
-
-	// Nsq broker
-	nsqBrk := brkNsq.New(&broker.Options{Name: AppName + "@nsq"}, config.Broker.Nsq)
-	nsqBrk.Handle(
-		handler.NewNsqHybrid(),
-	)
-
-	// Jetstream broker
-	jetstreamBrk := brkJetstream.New(&broker.Options{Name: AppName + "@jetstream"}, config.Broker.Jetstream)
-	jetstreamBrk.Handle(
-		handler.NewJetstreamHybrid(),
-	)
-
-	// Registry
-	rgConsul := rgConsul.New(nil, config.Registry.Consul)
-
 	// Service
-	svc := sicky.New(&service.Options{Name: AppName}, config.Service)
-	svc.Brokers(natsBrk, nsqBrk)
+	svc := standard.New(
+		&service.Options{
+			Name:    AppName,
+			Context: ctx,
+		}, config.Service,
+	)
 	svc.Servers(
 		httpSrv,
-		originalSrv,
+		fiberSrv,
 		grpcSrv,
 		wsSrv,
 		udpSrv,
 		tcpSrv,
 	)
-	svc.Registries(rgConsul)
-	err := service.Run()
-	if err != nil {
-		logger.Fatal(err.Error())
-	}
+
+	sicky.Run(config.Sicky)
 }
 
 /*

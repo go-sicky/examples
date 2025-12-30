@@ -31,73 +31,60 @@
 package main
 
 import (
+	"context"
+
 	"github.com/go-sicky/examples/greeter/handler"
-	brkNats "github.com/go-sicky/sicky/broker/nats"
-	brkNsq "github.com/go-sicky/sicky/broker/nsq"
-	"github.com/go-sicky/sicky/logger"
-	rgConsul "github.com/go-sicky/sicky/registry/consul"
-	rgMdns "github.com/go-sicky/sicky/registry/mdns"
-	"github.com/go-sicky/sicky/runtime"
+	"github.com/go-sicky/sicky"
 	"github.com/go-sicky/sicky/server"
 	srvGRPC "github.com/go-sicky/sicky/server/grpc"
 	"github.com/go-sicky/sicky/service"
-	"github.com/go-sicky/sicky/service/sicky"
+	"github.com/go-sicky/sicky/service/standard"
 )
 
-const (
-	AppName = "greeter.examples.sicky"
-	Version = "latest"
+var (
+	AppName   = "greeter.example.sicky"
+	Version   = "latest"
+	Branch    = "main"
+	Commit    = ""
+	BuildTime = ""
 )
 
 func main() {
-	// Runtime
-	runtime.Init(AppName)
-	runtime.LoadConfig(&config)
-	runtime.Start(config.Runtime)
+	ctx := context.Background()
 
-	// Logger
-	logger.Logger.Level(logger.DebugLevel)
+	// Sicky
+	sicky.Init(
+		&sicky.Options{
+			AppName:   AppName,
+			Version:   Version,
+			Branch:    Branch,
+			Commit:    Commit,
+			BuildTime: BuildTime,
+			Context:   ctx,
+		},
+		&config,
+	)
 
 	// GRPC server
-	grpcSrv := srvGRPC.New(&server.Options{Name: AppName + "@grpc"}, config.Server.GRPC)
+	grpcSrv := srvGRPC.New(
+		&server.Options{
+			Name:    AppName + "@grpc",
+			Context: ctx,
+		}, config.Server.GRPC,
+	)
 	grpcSrv.Handle(handler.NewGreeterGRPC())
 
-	// Broker
-	brkNats := brkNats.New(nil, config.Broker.Nats)
-	brkNsq := brkNsq.New(nil, config.Broker.Nsq)
-
-	// Registry
-	rgConsul := rgConsul.New(nil, config.Registry.Consul)
-	rgMdns := rgMdns.New(nil, config.Registry.Mdns)
-
 	// Service
-	svc := sicky.New(nil, config.Service)
+	svc := standard.New(
+		&service.Options{
+			Name:    AppName,
+			Context: ctx,
+		},
+		config.Service,
+	)
 	svc.Servers(grpcSrv)
-	svc.Brokers(brkNats, brkNsq)
-	svc.Registries(rgConsul, rgMdns)
 
-	service.Run()
-	// cfg, err := sicky.LoadConfig(AppName, Version)
-	// if err != nil {
-	// 	logger.Logger.Errorf("Load config failed : %s", err)
-	// }
-
-	// logger.Logger.Level(logger.LogLevel(cfg.Sicky.LogLevel))
-
-	// grpcSrv := sgrpc.NewServer(
-	// 	cfg.GRPCServer(AppName),
-	// 	server.Handle(handler.NewCFilter("cfilter")),
-	// )
-
-	// svc := sicky.NewService(
-	// 	cfg,
-	// 	sicky.Server(grpcSrv),
-	// )
-
-	// err = svc.Run()
-	// if err != nil {
-	// 	logger.Logger.Error(err.Error())
-	// }
+	sicky.Run(config.Sicky)
 }
 
 /*
