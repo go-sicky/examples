@@ -64,8 +64,8 @@ func main() {
 			BuildTime: BuildTime,
 			Context:   ctx,
 		},
-		&config,
 	)
+	sicky.ConfigUnmarshal(&config)
 
 	// HTTP server
 	httpSrv := srvHTTP.New(

@@ -1,3 +1,3 @@
 module github.com/go-sicky/example/hybrid
 
-go 1.25.5
+go 1.25.7

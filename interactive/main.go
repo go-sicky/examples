@@ -60,8 +60,8 @@ func main() {
 			BuildTime: BuildTime,
 			Context:   ctx,
 		},
-		&config,
 	)
+	sicky.ConfigUnmarshal(&config)
 
 	// Service
 	svc := interactive.New(
