@@ -1,3 +1,3 @@
 module github.com/go-sicky/examples/interactive
 
-go 1.25.7
+go 1.26.0
