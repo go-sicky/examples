@@ -25,7 +25,7 @@
  * @file main.go
  * @package main
  * @author Dr.NP <np@herewe.tech>
- * @since 01/20/2025
+ * @since 07/07/2026
  */
 
 package main
@@ -33,21 +33,13 @@ package main
 import (
 	"context"
 
-	"github.com/go-sicky/examples/hybrid/handler"
 	"github.com/go-sicky/sicky"
-	"github.com/go-sicky/sicky/server"
-	srvFiber "github.com/go-sicky/sicky/server/fiber"
-	srvGRPC "github.com/go-sicky/sicky/server/grpc"
-	srvHTTP "github.com/go-sicky/sicky/server/http"
-	srvTCP "github.com/go-sicky/sicky/server/tcp"
-	srvUDP "github.com/go-sicky/sicky/server/udp"
-	srvWebsocket "github.com/go-sicky/sicky/server/websocket"
 	"github.com/go-sicky/sicky/service"
-	"github.com/go-sicky/sicky/service/standard"
+	"github.com/go-sicky/sicky/service/mcp"
 )
 
 var (
-	AppName   = "hybrid.examples.sicky"
+	AppName   = "mcp.examples.sicky"
 	Version   = "latest"
 	Branch    = "main"
 	Commit    = ""
@@ -70,83 +62,14 @@ func main() {
 	)
 	sicky.ConfigUnmarshal(&config)
 
-	// HTTP server
-	httpSrv := srvHTTP.New(
-		&server.Options{
-			Name:    AppName + "@http",
-			Context: ctx,
-		}, config.Server.HTTP,
-	)
-
-	// Original server
-	fiberSrv := srvFiber.New(
-		&server.Options{
-			Name:    AppName + "@fiber",
-			Context: ctx,
-		}, config.Server.Fiber,
-	)
-	fiberSrv.Handle(
-		handler.NewHTTPHybrid(),
-	)
-
-	// GRPC server
-	grpcSrv := srvGRPC.New(
-		&server.Options{
-			Name:    AppName + "@grpc",
-			Context: ctx,
-		}, config.Server.GRPC)
-	grpcSrv.Handle(
-		handler.NewGRPCHybrid(),
-	)
-
-	// Websocket server
-	wsSrv := srvWebsocket.New(
-		&server.Options{
-			Name:    AppName + "@websocket",
-			Context: ctx,
-		}, config.Server.Websocket,
-	)
-	wsSrv.Handle(
-		handler.NewWSHybrid(),
-	)
-
-	// UDP server
-	udpSrv := srvUDP.New(
-		&server.Options{
-			Name:    AppName + "@udp",
-			Context: ctx,
-		}, config.Server.UDP,
-	)
-	udpSrv.Handle(
-		handler.NewUDPHybrid(),
-	)
-
-	// TCP server
-	tcpSrv := srvTCP.New(
-		&server.Options{
-			Name:    AppName + "@tcp",
-			Context: ctx,
-		}, config.Server.TCP,
-	)
-	tcpSrv.Handle(
-		handler.NewTCPHybrid(),
-	)
-
-	// Service
-	svc := standard.New(
+	svc := mcp.New(
 		&service.Options{
 			Name:    AppName,
 			Context: ctx,
 		}, config.Service,
 	)
-	svc.Servers(
-		httpSrv,
-		fiberSrv,
-		grpcSrv,
-		wsSrv,
-		udpSrv,
-		tcpSrv,
-	)
+
+	svc.Handle()
 
 	sicky.Run(config.Sicky)
 }

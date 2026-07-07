@@ -31,7 +31,7 @@
 package handler
 
 import (
-	"github.com/go-sicky/example/hybrid/proto"
+	"github.com/go-sicky/examples/hybrid/proto"
 	"github.com/go-sicky/examples/web/model"
 	"github.com/go-sicky/sicky/broker"
 	grpcClt "github.com/go-sicky/sicky/client/grpc"

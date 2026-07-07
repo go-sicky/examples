@@ -44,7 +44,7 @@ import (
 )
 
 var (
-	AppName   = "web.example.sicky"
+	AppName   = "web.examples.sicky"
 	Version   = "latest"
 	Branch    = "main"
 	Commit    = ""

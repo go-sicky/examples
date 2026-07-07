@@ -1,3 +1,3 @@
-module github.com/go-sicky/example/hybrid
+module github.com/go-sicky/examples/hybrid
 
 go 1.26.0

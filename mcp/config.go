@@ -22,70 +22,25 @@
  */
 
 /**
- * @file main.go
+ * @file config.go
  * @package main
  * @author Dr.NP <np@herewe.tech>
- * @since 08/10/2024
+ * @since 07/07/2026
  */
 
 package main
 
 import (
-	"context"
-
-	"github.com/go-sicky/examples/greeter/handler"
 	"github.com/go-sicky/sicky"
-	"github.com/go-sicky/sicky/server"
-	srvGRPC "github.com/go-sicky/sicky/server/grpc"
-	"github.com/go-sicky/sicky/service"
-	"github.com/go-sicky/sicky/service/standard"
+	"github.com/go-sicky/sicky/service/mcp"
 )
 
-var (
-	AppName   = "greeter.examples.sicky"
-	Version   = "latest"
-	Branch    = "main"
-	Commit    = ""
-	BuildTime = ""
-)
-
-func main() {
-	ctx := context.Background()
-
-	// Sicky
-	sicky.Init(
-		&sicky.Options{
-			AppName:   AppName,
-			Version:   Version,
-			Branch:    Branch,
-			Commit:    Commit,
-			BuildTime: BuildTime,
-			Context:   ctx,
-		},
-	)
-	sicky.ConfigUnmarshal(&config)
-
-	// GRPC server
-	grpcSrv := srvGRPC.New(
-		&server.Options{
-			Name:    AppName + "@grpc",
-			Context: ctx,
-		}, config.Server.GRPC,
-	)
-	grpcSrv.Handle(handler.NewGreeterGRPC())
-
-	// Service
-	svc := standard.New(
-		&service.Options{
-			Name:    AppName,
-			Context: ctx,
-		},
-		config.Service,
-	)
-	svc.Servers(grpcSrv)
-
-	sicky.Run(config.Sicky)
+type ConfigDef struct {
+	Service *mcp.Config   `json:"service" yaml:"service" mapstructure:"service"`
+	Sicky   *sicky.Config `json:"sicky" yaml:"sicky" mapstructure:"sicky"`
 }
+
+var config ConfigDef
 
 /*
  * Local variables:

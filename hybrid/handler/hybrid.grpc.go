@@ -33,7 +33,7 @@ package handler
 import (
 	"context"
 
-	"github.com/go-sicky/example/hybrid/proto"
+	"github.com/go-sicky/examples/hybrid/proto"
 	"google.golang.org/grpc"
 )
 
