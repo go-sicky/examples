@@ -22,59 +22,46 @@
  */
 
 /**
- * @file main.go
- * @package main
+ * @file web.http.go
+ * @package handler
  * @author Dr.NP <np@herewe.tech>
- * @since 07/07/2026
+ * @since 08/13/2026
  */
 
-package main
+package handler
 
 import (
-	"context"
+	"net/http"
 
-	"github.com/go-sicky/sicky"
-	"github.com/go-sicky/sicky/service"
-	"github.com/go-sicky/sicky/service/mcp"
+	"github.com/uptrace/bunrouter"
 )
 
-var (
-	AppName   = "mcp.examples.sicky"
-	Version   = "latest"
-	Branch    = "main"
-	Commit    = ""
-	BuildTime = ""
-)
+type WebHTTP struct{}
 
-func main() {
-	ctx := context.Background()
-
-	// Sicky
-	sicky.Init(
-		&sicky.Options{
-			AppName:       AppName,
-			Version:       Version,
-			Branch:        Branch,
-			Commit:        Commit,
-			BuildTime:     BuildTime,
-			Context:       ctx,
-			DisableConfig: true,
-			Silence:       true,
-		},
-	)
-	sicky.ConfigUnmarshal(&config)
-
-	svc := mcp.New(
-		&service.Options{
-			Name:    AppName,
-			Context: ctx,
-		}, config.Service,
-	)
-
-	svc.Handle()
-
-	sicky.Run(config.Sicky)
+func NewWebHTTP() *WebHTTP {
+	return &WebHTTP{}
 }
+
+func (h *WebHTTP) Register(router *bunrouter.Router) {
+	router.GET("/call", h.call)
+}
+
+func (h *WebHTTP) Name() string {
+	return "web.http"
+}
+
+func (h *WebHTTP) Type() string {
+	return "http"
+}
+
+/* {{{ [HTTP handlers] */
+func (h *WebHTTP) call(w http.ResponseWriter, r bunrouter.Request) error {
+	return bunrouter.JSON(w, bunrouter.H{
+		"message": "Hello, World!",
+	})
+}
+
+/* }}} */
 
 /*
  * Local variables:

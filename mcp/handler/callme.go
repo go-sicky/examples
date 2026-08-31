@@ -22,58 +22,48 @@
  */
 
 /**
- * @file main.go
- * @package main
+ * @file callme.go
+ * @package handler
  * @author Dr.NP <np@herewe.tech>
- * @since 07/07/2026
+ * @since 07/08/2026
  */
 
-package main
+package handler
 
-import (
-	"context"
+import "github.com/go-sicky/sicky/service/mcp"
 
-	"github.com/go-sicky/sicky"
-	"github.com/go-sicky/sicky/service"
-	"github.com/go-sicky/sicky/service/mcp"
-)
+type CallMeHandler struct{}
 
-var (
-	AppName   = "mcp.examples.sicky"
-	Version   = "latest"
-	Branch    = "main"
-	Commit    = ""
-	BuildTime = ""
-)
+func (h *CallMeHandler) Name() string {
+	return "callme"
+}
 
-func main() {
-	ctx := context.Background()
+func (h *CallMeHandler) Description() string {
+	return "CallMeHandler is a handler for call me."
+}
 
-	// Sicky
-	sicky.Init(
-		&sicky.Options{
-			AppName:       AppName,
-			Version:       Version,
-			Branch:        Branch,
-			Commit:        Commit,
-			BuildTime:     BuildTime,
-			Context:       ctx,
-			DisableConfig: true,
-			Silence:       true,
-		},
-	)
-	sicky.ConfigUnmarshal(&config)
+func (h *CallMeHandler) Tools() []mcp.Tool {
+	return []mcp.Tool{}
+}
 
-	svc := mcp.New(
-		&service.Options{
-			Name:    AppName,
-			Context: ctx,
-		}, config.Service,
-	)
+func (h *CallMeHandler) CallTool(name string, args map[string]interface{}) (*mcp.ToolsCallResult, error) {
+	return nil, nil
+}
 
-	svc.Handle()
+func (h *CallMeHandler) Resources() []mcp.Resource {
+	return []mcp.Resource{}
+}
 
-	sicky.Run(config.Sicky)
+func (h *CallMeHandler) ReadResource(uri string) (*mcp.ResourcesReadResult, error) {
+	return nil, nil
+}
+
+func (h *CallMeHandler) Prompts() []mcp.Prompt {
+	return []mcp.Prompt{}
+}
+
+func (h *CallMeHandler) GetPrompt(name string, args map[string]string) (*mcp.PromptsGetResult, error) {
+	return nil, nil
 }
 
 /*

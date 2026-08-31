@@ -75,6 +75,7 @@ func main() {
 		}, config.Server.HTTP,
 	)
 	// httpSrv.Handle(handler.NewCallHTTP())
+	httpSrv.Handle(handler.NewWebHTTP())
 
 	// GRPC server
 	grpcSrv := srvGRPC.New(
