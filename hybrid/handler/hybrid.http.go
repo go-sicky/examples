@@ -32,7 +32,7 @@ package handler
 
 import (
 	"github.com/go-sicky/sicky/utils"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 type HTTPHybrid struct{}
@@ -56,10 +56,10 @@ func (h *HTTPHybrid) Register(app *fiber.App) {
 }
 
 /* {{{ [Methods] */
-func (h *HTTPHybrid) hybrid(c *fiber.Ctx) error {
+func (h *HTTPHybrid) hybrid(c fiber.Ctx) error {
 	e := utils.WrapHTTPResponse(nil)
 
-	return c.Format(e)
+	return c.AutoFormat(e)
 }
 
 /* }}} */

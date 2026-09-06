@@ -36,7 +36,7 @@ import (
 	"github.com/go-sicky/sicky/broker"
 	grpcClt "github.com/go-sicky/sicky/client/grpc"
 	"github.com/go-sicky/sicky/utils"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 type CallHTTP struct {
@@ -76,11 +76,11 @@ func (h *CallHTTP) Type() string {
 }
 
 /* {{{ [HTTP handlers] */
-func (h *CallHTTP) index(c *fiber.Ctx) error {
+func (h *CallHTTP) index(c fiber.Ctx) error {
 	return c.JSON(utils.WrapHTTPResponse(nil))
 }
 
-func (h *CallHTTP) grpc(c *fiber.Ctx) error {
+func (h *CallHTTP) grpc(c fiber.Ctx) error {
 	e := utils.WrapHTTPResponse(nil)
 	req := &proto.HybridRequest{
 		Name: "John Doe",
@@ -97,36 +97,36 @@ func (h *CallHTTP) grpc(c *fiber.Ctx) error {
 	return c.JSON(e)
 }
 
-func (h *CallHTTP) pool(c *fiber.Ctx) error {
+func (h *CallHTTP) pool(c fiber.Ctx) error {
 	// return c.JSON(utils.WrapHTTPResponse(registry.Pool))
 	return nil
 }
 
-func (h *CallHTTP) routers(c *fiber.Ctx) error {
+func (h *CallHTTP) routers(c fiber.Ctx) error {
 	r := c.App().GetRoutes()
 
 	return c.JSON(utils.WrapHTTPResponse(r))
 }
 
-func (h *CallHTTP) tcp(c *fiber.Ctx) error {
+func (h *CallHTTP) tcp(c fiber.Ctx) error {
 	return c.JSON(utils.WrapHTTPResponse(nil))
 }
 
-func (h *CallHTTP) udp(c *fiber.Ctx) error {
+func (h *CallHTTP) udp(c fiber.Ctx) error {
 	return c.JSON(utils.WrapHTTPResponse(nil))
 }
 
-func (h *CallHTTP) broker(c *fiber.Ctx) error {
+func (h *CallHTTP) broker(c fiber.Ctx) error {
 	v := &model.Person{
 		Name:    "John Doe",
 		Age:     24,
 		Address: "123 Main St",
 	}
 	msg := broker.NewMessage(nil)
-	msg.Format(v, broker.MsgJson)
+	msg.Format(v, broker.MsgJSON)
 	broker.Publish("hybrid", msg)
 
-	return c.Format(utils.WrapHTTPResponse(nil))
+	return c.AutoFormat(utils.WrapHTTPResponse(nil))
 }
 
 /* }}} */
